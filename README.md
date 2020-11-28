@@ -47,7 +47,18 @@ In progress ...
 
 # Install
 
-In progress ...
+**macOS**
+``` bash
+[~] git clone https://github.com/tomas-ramos21/Donut.git
+[~] cd Donut
+[~] autoconf
+[~] ./configure
+[~] make
+[~] make install
+```
+**Linux**
+
+In progress ..
 
 # Roadmap
 
