@@ -23,7 +23,7 @@
 Donut is an **experimental** data versioning system that allows data to be shared  while keeping track of it's changes. Reducing data
 duplication and bringing decentralization to the data versioning solutions.
 
-# Doctrines
+# Doctrine
 
 What values guide the design & development of the system?
 
