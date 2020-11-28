@@ -17,31 +17,60 @@ The system planned for development for Donut so far are provided below.
 
 ** Memory System
 
-The purpose of the memory system is:
+*** Purpose
 
 1. Allocate/Deallocate memory
 2. Guarantee memory alignment
 3. Ensure memory used by a system can be written into by other system
+*** Modules
 
 ** Testing System
 
-The purpose of the testing system is:
+*** Purpose
 
 1. Provide a consistent and intuitive way to create unit-tests
 2. Provide a way to test functions and collect the results
 
+*** Modules
 ** User Interaction System
+
+*** Purpose
+1. Parse arguments
+2. Detect wrong arguments and input errors
+
+*** Modules
 ** Doctor System
 
-The purpose of the Doctor system is:
-
+*** Purpose
 1. Provide a way to find to analyse a data repository integrity
 2. Diagnose problems in the current repository
 
+*** Modules
 ** Metadata System
+
+*** Purpose
+
+1. Store all information between data versions and their relations (i.e. Parent/Child)
+2. Crunch metadata to perform jumps between versions (i.e. Delta merges)
+
+*** Modules
 ** Databank System
+
+*** Purpose
+
+1. Store and manage all data blobs
+2. Execute migration between versions
+3. Provide different algorithms for different data formats
+4. Dispense data to the user
+
+*** Modules
 ** Rendering System
 
+*** Purpose
+
+1. Display information to the user
+
+*** Modules
 * Tasks
 ** Memory System
 ** Testing System
@@ -50,3 +79,4 @@ The purpose of the Doctor system is:
 ** Metadata System
 ** Databank System
 ** Rendering System
+* Issues
