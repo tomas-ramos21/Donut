@@ -1,6 +1,6 @@
-AC_INIT([Donut], 0.01)
+AC_INIT([Donut],0.01)
 
-AC_CHECK_PROGS(CC, [clang gcc xlc icc], [""])
+AC_CHECK_PROGS(CC, [clang gcc], [""])
 AC_PROG_CC
 AC_SUBST(CC)
 
