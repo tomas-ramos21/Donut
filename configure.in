@@ -1,0 +1,8 @@
+AC_INIT([Donut], 0.01)
+
+AC_CHECK_PROGS(CC, [clang gcc xlc icc], [""])
+AC_PROG_CC
+AC_SUBST(CC)
+
+AC_CONFIG_FILES([makefile.config])
+AC_OUTPUT
