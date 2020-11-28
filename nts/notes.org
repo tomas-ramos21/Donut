@@ -7,9 +7,9 @@ The modules which define a system are then split in header (i.e. *.h) and source
 
 * Design
 
-**Programming Model:** Data Oriented Design
-**Standard:** C99
-**POSIX Standard:** 2001
+- **Programming Model:** Data Oriented Design
+- **Standard:** C99
+- **POSIX Standard:** 2001
 
 * Systems
 
