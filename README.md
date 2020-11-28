@@ -30,7 +30,7 @@ What values guide the design & development of the system?
 + **Efficency is King.** Gotta make the most of the CPU resources available through SIMD (i.e. AVX, SSE)
 + **Performance is Queen.** Algorithms and processes need to be fast so that waiting times are minimized
 + **Close to the metal.** The hardware is the platform. Hence, the speed at which the hardware can go is the only limitation
-+ **Portability.** Need to be POSIX compliant, so that it can be used in different platforms
++ **Portability.** Need to be POSIX compliant
 
 # Features
 
