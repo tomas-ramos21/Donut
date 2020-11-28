@@ -1,0 +1,52 @@
+
+* Introduction
+
+Donut is composed of several systems each with it's set of functionalities (e.g. Memory System will manage allocation, deallocation and memory usage). Furthermore, the systems should be able to run in parallel threads and communicate with each other when necessary to accomplish tasks.
+
+The modules which define a system are then split in header (i.e. *.h) and source files (i.e *.c). Modules should not be re-used between systems!
+
+* Design
+
+**Programming Model:** Data Oriented Design
+**Standard:** C99
+**POSIX Standard:** 2001
+
+* Systems
+
+The system planned for development for Donut so far are provided below.
+
+** Memory System
+
+The purpose of the memory system is:
+
+1. Allocate/Deallocate memory
+2. Guarantee memory alignment
+3. Ensure memory used by a system can be written into by other system
+
+** Testing System
+
+The purpose of the testing system is:
+
+1. Provide a consistent and intuitive way to create unit-tests
+2. Provide a way to test functions and collect the results
+
+** User Interaction System
+** Doctor System
+
+The purpose of the Doctor system is:
+
+1. Provide a way to find to analyse a data repository integrity
+2. Diagnose problems in the current repository
+
+** Metadata System
+** Databank System
+** Rendering System
+
+* Tasks
+** Memory System
+** Testing System
+** User Interaction System
+** Doctor System
+** Metadata System
+** Databank System
+** Rendering System
