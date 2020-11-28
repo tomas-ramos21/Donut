@@ -43,7 +43,8 @@ What Donut is meant to achieve?
 
 # Prerequisites
 
-In progress ...
++ Autoconf
++ Automake
 
 # Install
 
