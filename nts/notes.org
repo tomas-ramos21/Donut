@@ -7,9 +7,9 @@ The modules which define a system are then split in header (i.e. *.h) and source
 
 * Design
 
-- **Programming Model:** Data Oriented Design
-- **Standard:** C99
-- **POSIX Standard:** 2001
+- *Programming Model:* Data Oriented Design
+- *Standard:* C99
+- *POSIX Standard:* 2001
 
 * Systems
 
@@ -22,7 +22,11 @@ The system planned for development for Donut so far are provided below.
 1. Allocate/Deallocate memory
 2. Guarantee memory alignment
 3. Ensure memory used by a system can be written into by other system
+
 *** Modules
+
+1. *alloc.c:* Takes care of the memory allocation
+2. *manag.c:* Takes care of the memory pages management (e.g. increase/decrease of allocation)
 
 ** Testing System
 
@@ -32,20 +36,33 @@ The system planned for development for Donut so far are provided below.
 2. Provide a way to test functions and collect the results
 
 *** Modules
+
+1. *test.c:* Provide way to create group of tests for a module
+2. *check.c:* Execute tests and report results
+
 ** User Interaction System
 
 *** Purpose
+
 1. Parse arguments
 2. Detect wrong arguments and input errors
 
 *** Modules
+
+1. *parse.c:* Argument parser functionalities (e.g. tokenization)
+
 ** Doctor System
 
 *** Purpose
+
 1. Provide a way to find to analyse a data repository integrity
 2. Diagnose problems in the current repository
 
 *** Modules
+
+1. *doctr.c:* Execute sanity checks and analysis results
+2. *diagn.c* Define diagnose checks to be execute
+
 ** Metadata System
 
 *** Purpose
@@ -54,6 +71,11 @@ The system planned for development for Donut so far are provided below.
 2. Crunch metadata to perform jumps between versions (i.e. Delta merges)
 
 *** Modules
+
+1. *delta.c:* Find differences between data versions
+2. *table.c:* Describe metadata table. Which contains version information and their relations
+3. *store.c:* Save and load into disk
+
 ** Databank System
 
 *** Purpose
@@ -64,6 +86,11 @@ The system planned for development for Donut so far are provided below.
 4. Dispense data to the user
 
 *** Modules
+
+1. *blob.c:* Define blobs and possible actions on them
+2. *chang.c:* Receive version differences and dispense version to use
+3. *csv.c:* Convert CSV data to databank's blobs
+
 ** Rendering System
 
 *** Purpose
@@ -71,9 +98,36 @@ The system planned for development for Donut so far are provided below.
 1. Display information to the user
 
 *** Modules
+
+1. *rendr.c:* Processes to render information to the user (e.g. Tables, trees)
+
 * Tasks
 ** Memory System
+*** [ ] alloc.c
+
+- [ ] Code xmalloc
+- [ ] Code xcalloc
+- [ ] Code xrealloc
+- [ ] Memory Alignment Procedure
+
+*** [ ] manag.c
+
+- [ ] Memory Manager Information (i.e. struct)
+- [ ] Detect OS page size procedure
+- [ ] Increase allocation procedure
+- [ ] Reduce allocation procedure
+
 ** Testing System
+
+*** [ ] test.c
+
+- [ ] Module test information (i.e. struct)
+
+*** [ ]  check.c
+
+- [ ] Execute all tests
+- [ ] Compile test report
+
 ** User Interaction System
 ** Doctor System
 ** Metadata System
