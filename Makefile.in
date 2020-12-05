@@ -6,7 +6,7 @@ OBJ_DIR=obj
 BIN_DIR=bin
 USR_DIR=/usr/local/bin/
 CFLAGS = -O3 -Wall -g -std=c99 -pedantic -D_POSIX_C_SOURCE=200112L
-CC=clang
+CC=@CC@
 
 # List source files
 SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)
