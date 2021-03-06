@@ -1,8 +1,8 @@
 <div align="center">
 
-# Donut Versioning System
+# Donut
 
-![Latest commit](https://img.shields.io/github/last-commit/tomas-ramos21/Donut/develop?style=flat)
+![Latest commit](https://img.shields.io/github/last-commit/tomas-ramos21/Donut/develop?style=flat&color=pink)
 ![License](https://img.shields.io/github/license/tomas-ramos21/Donut?color=pink)
 ![Version](https://img.shields.io/github/manifest-json/v/tomas-ramos21/Donut?color=pink)
 
