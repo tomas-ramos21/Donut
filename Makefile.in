@@ -17,7 +17,6 @@ OUT=$(wildcard $(BIN_DIR)/*)
 all: $(EXE)
 	@mv $(EXE) $(BIN_DIR)/
 	@echo [LD] Executable is ready!
-	@echo
 
 $(EXE): $(OBJ)
 	@echo [CC] Compiled all objects
@@ -45,6 +44,12 @@ install:
 clean:
 	@rm -r $(OBJ_DIR)
 	@rm -r $(BIN_DIR)
+	@rm -r "autom4te.cache/"
+	@rm -r "config.log"
+	@rm -r "config.status"
+	@rm -r "configure"
 	@echo [Donut] Cleaned previous compilation
-	@echo
 
+uninstall:
+	@rm $(USR_DIR)/$(EXE)
+	@echo [Donut] Uninstalled
