@@ -7,3 +7,4 @@ autoconf
 echo "[Donut] Running Makefile"
 make
 make install
+make clean
