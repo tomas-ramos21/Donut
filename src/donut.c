@@ -1,32 +1,23 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "donut.h"
-#include "inttypes.h"
 #include "string.h"
+#include "cmd/init.h"
+#include "cmd/doctor.h"
 
-#define CMD_CNT 3
+#define CMD_CNT 2
+#define RECURSIVE_OPT 0x1
 
 struct parsed_args {
-        const char* cmd;
         const char** args;
-        unsigned int argc;
-        unsigned int opts;
+        const unsigned int opts;
 };
 
-/*
- * TODO: Replace invalid/no command message with message displaying available commands
- */
 static int
-cmd_max_args(const char* cmd)
+cmd_max_args(const char* cmd, const int len)
 {
-        if(!cmd){
-                printf("No command was given.\n");
-                exit(0);
-        }
-
-        const int len = strlen(cmd);
-        const int arg_sz[] = {1, 1, 2};
-        const char* cmds[] = {"init", "ls", "cp"};
+        const int arg_sz[] = {1, 0};
+        const char* cmds[] = {"init", "doctor"};
 
         for(int i = 0; i < CMD_CNT; i++)
                 if(strncmp(cmd, cmds[i], len) == 0)
@@ -37,9 +28,8 @@ cmd_max_args(const char* cmd)
 }
 
 static struct parsed_args
-parse_args(char** argv)
+parse_args(char** argv, const int max_args)
 {
-        int max_args = cmd_max_args(argv[1]);
         char** all_args = &argv[2];
         const char* args[max_args];
         int total_args = 0;
@@ -51,23 +41,43 @@ parse_args(char** argv)
                         total_args++;
                 } else {
                         if(!strncmp(*all_args, "-r", 2))
-                                opts = opts | 0x1;
+                                opts = opts | RECURSIVE_OPT;
                 }
                 all_args++;
         }
 
-        struct parsed_args ret = {.cmd = argv[1], .args = args, .argc = total_args, .opts = opts};
+        struct parsed_args ret = {.args = args, .opts = opts};
         return ret;
 }
 
+/* TODO: Replace printf with actual commands
+ * TODO: Replace invalid/no command message with message displaying available commands
+ */
 int
 donut_main(int argc, char** argv)
 {
-        struct parsed_args cmd_args = parse_args(argv);
-        printf("Command: %s\n", cmd_args.cmd);
-        printf("Options: 0x%x\n", cmd_args.opts);
-        for(unsigned int i = 0; i < cmd_args.argc; i++)
-                printf("Argument %u: %s\n", i, cmd_args.args[i]);
+        const char* cmd;
+        int len, max_args;
+
+        if(!argv[1]){
+                printf("No command was given.\n");
+                exit(0);
+        }
+
+        cmd = argv[1];
+        len = strlen(cmd);
+        max_args = cmd_max_args(cmd, len);
+        const struct parsed_args args = parse_args(argv, max_args);
+
+
+        if (strncmp("init", cmd, len) == 0)
+                init(max_args, args.args, args.opts);
+        else if (strncmp("doctor", cmd, len) == 0)
+                doctor(max_args, args.args, args.opts);
+        else
+                printf("Unrecognized command");
+
+
         return 0;
 }
 
