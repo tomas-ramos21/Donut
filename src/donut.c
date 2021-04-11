@@ -2,10 +2,9 @@
 #include "stdlib.h"
 #include "donut.h"
 #include "string.h"
-#include "cmd/init.h"
-#include "cmd/doctor.h"
+#include "cmd/cmd.h"
 
-#define CMD_CNT 2
+#define CMD_CNT 3
 #define RECURSIVE_OPT 0x1
 
 struct parsed_args {
@@ -16,8 +15,8 @@ struct parsed_args {
 static int
 cmd_max_args(const char* cmd, const int len)
 {
-        const int arg_sz[] = {1, 0};
-        const char* cmds[] = {"init", "doctor"};
+        const int arg_sz[] = {1, 0, 0};
+        const char* cmds[] = {"init", "doctor", "conf"};
 
         for(int i = 0; i < CMD_CNT; i++)
                 if(strncmp(cmd, cmds[i], len) == 0)
@@ -74,6 +73,8 @@ donut_main(int argc, char** argv)
                 init(max_args, args.args, args.opts);
         else if (strncmp("doctor", cmd, len) == 0)
                 doctor(max_args, args.args, args.opts);
+        else if (strncmp("conf", cmd, len) == 0)
+                conf(max_args, args.args, args.opts);
         else
                 printf("Unrecognized command");
 

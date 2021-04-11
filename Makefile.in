@@ -5,8 +5,11 @@ SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
 USR_DIR=/usr/local/bin/
-CFLAGS = -O3 -Wall -g -std=c99 -Iinc -pedantic -D_POSIX_C_SOURCE=200112L
+CPU=@if [ "${OSTYPE:0:6}" = "darwin" ]; then `sysctl -a | grep -i hw.ncpu | cut -d' ' -f2 | tr -dc '[:alnum:]'`; elif [ "${OSTYPE:0:5}" = "linux" ] then `lscpu | grep -i "CPU(s):" | tr -d [[:blank:]] | cut -d ':' -f2`; else 0; fi
+CACHE_LINE_SIZE=@if [ "${OSTYPE:0:6}" = "darwin" ]; then `sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:alnum:]'`; else 64; fi
+CFLAGS = -O3 -Wall -g -std=c99 -Iinc -pedantic -DN_CPU="$CPU" -DCACHE_LINE="$CACHE_LINE_SIZE"
 CC=@CC@
+
 
 # List source files
 SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)

@@ -1,8 +1,8 @@
 #ifndef __ALLOC_H_
 #define __ALLOC_H_
 
-#ifdef __SIZE_OF_POINTER__
-#define ALIGN __SIZE_OF_POINTER__ * 8
+#ifdef __SIZEOF_POINTER__
+#define ALIGN __SIZEOF_POINTER__ * 8
 #else
 #define ALIGN 64
 #endif
