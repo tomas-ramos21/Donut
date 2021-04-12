@@ -7,8 +7,8 @@
 struct sys_conf {
         uint32_t pg_sz;       /* OS Page Size              */
         uint32_t ch_ln_sz;    /* Cache Line Size           */
-        uint32_t ch_l1_dt_sz; /* L1 data cache size        */
-        uint32_t ch_l1_in_sz; /* L1 instruction cache size */
+        uint32_t ch_l1d_sz; /* L1 data cache size        */
+        uint32_t ch_l1i_sz; /* L1 instruction cache size */
         uint32_t ch_l2_sz;    /* L2 cache size             */
         uint32_t ch_l3_sz;    /* L3 cache size             */
         uint32_t fd_max;      /* Max files opened          */

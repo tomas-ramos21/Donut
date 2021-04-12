@@ -5,7 +5,7 @@
 struct sys_conf
 get_sys_conf()
 {
-        uint32_t pg_sz, fd_max, n_cpus, ch_ln_sz;
+        uint32_t pg_sz, fd_max;
 
 #if defined (_SC_PAGESIZE)
         pg_sz  = (uint32_t) sysconf(_SC_PAGESIZE);
@@ -24,21 +24,7 @@ get_sys_conf()
         fd_max = 1024;
 #endif
 
-#if defined (_SC_NPROCESSORS_CONF)
-        n_cpus = (uint32_t) sysconf(_SC_NPROCESSORS_CONF);
-#elif (__APPLE__) | (__MACH__) | (__linux__)
-        n_cpus = N_CPU;
-#else
-        n_cpus = 0;
-#endif
-
-#if defined (_SC_LEVEL1_DCACHE_LINESIZE) & !(__arm__)
-        ch_ln_sz = sysconf(_SC_LEVEL1_DCACHE_LINESIZE);
-#else
-        ch_ln_sz = CACHE_LINE;
-#endif
-
-        struct sys_conf ret = {pg_sz, ch_ln_sz, 0, 0, 0, 0, fd_max, n_cpus};
+        struct sys_conf ret = {pg_sz, CACHE_LINE, D_CACHE, I_CACHE, L2_CACHE_SIZE, L3_CACHE_SIZE, fd_max, N_CPU};
         return ret;
 }
 
@@ -57,8 +43,8 @@ Max Amount of Open Files: %u\n\
 Number of CPUs: %u\n",
                info.pg_sz,
                info.ch_ln_sz,
-               info.ch_l1_dt_sz,
-               info.ch_l1_in_sz,
+               info.ch_l1d_sz,
+               info.ch_l1i_sz,
                info.ch_l2_sz,
                info.ch_l3_sz,
                info.fd_max,
