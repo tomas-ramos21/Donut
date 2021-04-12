@@ -5,10 +5,56 @@ SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
 USR_DIR=/usr/local/bin/
-CPU=@if [ "${OSTYPE:0:6}" = "darwin" ]; then `sysctl -a | grep -i hw.ncpu | cut -d' ' -f2 | tr -dc '[:alnum:]'`; elif [ "${OSTYPE:0:5}" = "linux" ] then `lscpu | grep -i "CPU(s):" | tr -d [[:blank:]] | cut -d ':' -f2`; else 0; fi
-CACHE_LINE_SIZE=@if [ "${OSTYPE:0:6}" = "darwin" ]; then `sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:alnum:]'`; else 64; fi
-CFLAGS = -O3 -Wall -g -std=c99 -Iinc -pedantic -DN_CPU="$CPU" -DCACHE_LINE="$CACHE_LINE_SIZE"
+OS=$(shell uname -s)
+DEFS=-DN_CPU=$(CPU) -DCACHE_LINE=$(CACHE_LINE_SIZE) -DI_CACHE=$(INSTRUCTION_CACHE) -DD_CACHE=$(DATA_CACHE) -DL2_CACHE_SIZE=$(L2_CACHE_SIZE) -DL3_CACHE_SIZE=$(L3_CACHE_SIZE)
+CFLAGS=-O3 -Wall -g -std=c99 -Iinc -pedantic $(DEFS)
 CC=@CC@
+
+# Default Hardware Config Variabes
+DEFAULT_CACHE_LINE_SIZE=64
+DEFAULT_NUMBER_CPUS=1
+DEFAULT_I_CACHE_SIZE=32768
+DEFAULT_D_CACHE_SIZE=32768
+DEFAULT_L2_CACHE_SIZE=0
+DEFAULT_L3_CACHE_SIZE=0
+
+# Hardware Variables
+ifeq ($(OS), Darwin)
+	CACHE_LINE_CMD := $(shell sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	CACHE_LINE_SIZE := $(if $(CACHE_LINE_CMD),$(CACHE_LINE_CMD),$(DEFAULT_CACHE_LINE_SIZE))
+	NUM_CPUS := $(shell sysctl -a | grep -i hw.ncpu | cut -d' ' -f2 | tr -dc '[:digit:]')
+	CPU := $(if $(NUM_CPUS),$(NUM_CPUS),$(DEFAULT_NUMBER_CPUS))
+	I_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1icachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	INSTRUCTION_CACHE := $(if $(I_CACHE_CMD),$(I_CACHE_CMD),$(DEFAULT_I_CACHE_SIZE))
+	D_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1dcachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	DATA_CACHE := $(if $(D_CACHE_CMD),$(D_CACHE_CMD),$(DEFAULT_D_CACHE_SIZE))
+	L2_CACHE_CMD := $(shell sysctl -a | grep -i hw.l2cachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	L2_CACHE_SIZE := $(if $(L2_CACHE_CMD),$(L2_CACHE_CMD),$(DEFAULT_L2_CACHE_SIZE))
+	L3_CACHE_CMD := $(shell sysctl -a | grep -i hw.l3cachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	L3_CACHE_SIZE := $(if $(L3_CACHE_CMD),$(L3_CACHE_CMD),$(DEFAULT_L3_CACHE_SIZE))
+else ifeq ($(OS), FreeBSD)
+	CACHE_LINE_CMD := $(shell sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	CACHE_LINE_SIZE := $(if $(CACHE_LINE_CMD),$(CACHE_LINE_CMD),$(DEFAULT_CACHE_LINE_SIZE))
+	NUM_CPUS := $(shell sysctl -a | grep -i hw.ncpu | cut -d' ' -f2 | tr -dc '[:digit:]')
+	CPU := $(if $(NUM_CPUS),$(NUM_CPUS),$(DEFAULT_NUMBER_CPUS))
+	I_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1icachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	INSTRUCTION_CACHE := $(if $(I_CACHE_CMD),$(I_CACHE_CMD),$(DEFAULT_I_CACHE_SIZE))
+	D_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1dcachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	DATA_CACHE := $(if $(D_CACHE_CMD),$(D_CACHE_CMD),$(DEFAULT_D_CACHE_SIZE))
+	L2_CACHE_CMD := $(shell sysctl -a | grep -i hw.l2cachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	L2_CACHE_SIZE := $(if $(L2_CACHE_CMD),$(L2_CACHE_CMD),$(DEFAULT_L2_CACHE_SIZE))
+	L3_CACHE_CMD := $(shell sysctl -a | grep -i hw.l3cachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
+	L3_CACHE_SIZE := $(if $(L3_CACHE_CMD),$(L3_CACHE_CMD),$(DEFAULT_L3_CACHE_SIZE))
+else ifeq ($(OS), Linux)
+	CPU := $(shell lscpu | grep -i "CPU(s):" | tr -d [[:blank:]] | cut -d ':' -f2)
+else
+	CACHE_LINE_SIZE=$(DEFAULT_CACHE_LINE_SIZE)
+	CPU=$(DEFAULT_NUMBER_CPUS)
+	INSTRUCTION_CACHE=0
+	DATA_CACHE=0
+	L2_CACHE_SIZE=0
+	L3_CACHE_SIZE=0
+endif
 
 
 # List source files
@@ -26,7 +72,6 @@ $(EXE): $(OBJ)
 	@echo [LD] Linking object files
 	@$(CC) $^ -o $@
 	@echo [LD] Linked all object files
-
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c prep
 	@mkdir -p $(@D)
