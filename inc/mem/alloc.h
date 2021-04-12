@@ -11,5 +11,6 @@
 
 void* xmalloc(size_t sz);
 void* xcalloc(size_t n, size_t sz);
+void* xrealloc(void* buff, size_t sz);
 
 #endif // __ALLOC_H_

@@ -1,6 +1,7 @@
 #include "cmd/doctor.h"
 #include "mem/alloc.h"
 #include "stdlib.h"
+#include "string.h"
 #include "misc/colour.h"
 #include "inttypes.h"
 
@@ -50,6 +51,35 @@ test_mem_alloc(void)
                 printf("    " GREEN "- xcalloc: passed" RESET "\n");
         else
                 printf("    " RED "- xcalloc: failed" RESET "\n");
+
+        /* Realloc Test */
+        char* dt = (char*) malloc(10);
+        memset(dt, 0x1, 10);
+
+        unsigned char res_realloc[NUM_ALLOC_TESTS];
+        for(int i = 0; i < NUM_ALLOC_TESTS; i++){
+                sum = 0;
+                buff = xrealloc(dt, 11);
+
+                char* buff_cp = buff;
+                while (*buff_cp) {
+                        sum += *buff_cp;
+                        buff_cp++;
+                }
+
+                if(!buff && ((uintptr_t) buff % ALIGN) == 0 && sum == 10)
+                        res_realloc[i] = 1;
+                free(buff);
+        }
+
+        sum = 0;
+        for(i = 0; i < NUM_ALLOC_TESTS; i++)
+                sum += res_calloc[i];
+
+        if(sum == NUM_ALLOC_TESTS)
+                printf("    " GREEN "- xrealloc: passed" RESET "\n");
+        else
+                printf("    " RED "- xrealloc: failed" RESET "\n");
 }
 
 int
