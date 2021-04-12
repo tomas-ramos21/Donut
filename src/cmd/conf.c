@@ -32,7 +32,7 @@ get_sys_conf()
         n_cpus = 0;
 #endif
 
-#if defined (_SC_LEVEL1_DCACHE_LINESIZE)
+#if defined (_SC_LEVEL1_DCACHE_LINESIZE) & !(__arm__)
         ch_ln_sz = sysconf(_SC_LEVEL1_DCACHE_LINESIZE);
 #else
         ch_ln_sz = CACHE_LINE;
