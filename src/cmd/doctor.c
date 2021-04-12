@@ -2,6 +2,7 @@
 #include "mem/alloc.h"
 #include "stdlib.h"
 #include "misc/colour.h"
+#include "inttypes.h"
 
 #define NUM_ALLOC_TESTS 10
 
