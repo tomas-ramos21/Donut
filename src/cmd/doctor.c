@@ -17,11 +17,11 @@ test_mem_alloc(void)
         int i, sum = 0;
 
         /*  Malloc Test */
-        printf("[Allocation Module]\n");
+        printf("\n[Allocation Module]\n");
         unsigned char res_malloc[NUM_ALLOC_TESTS];
         for(i = 0; i < NUM_ALLOC_TESTS; i++){
-                buff = xmalloc(4096);
-                if(((uintptr_t) buff % ALIGN) == 0)
+                buff = xmalloc(PAGE_SIZE);
+                if(((uintptr_t) buff % CACHE_LINE) == 0)
                         res_malloc[i] = 1;
                 free(buff);
         }
@@ -30,16 +30,16 @@ test_mem_alloc(void)
                 sum += res_malloc[i];
 
         if(sum == NUM_ALLOC_TESTS)
-                printf("    " GREEN "- xmalloc: passed" RESET "\n");
+                printf(GREEN "- xmalloc: passed" RESET "\n");
         else
-                printf("    " RED "- xmalloc: failed" RESET "\n");
+                printf(RED "- xmalloc: failed" RESET "\n");
 
         /* Calloc Test */
         sum = 0;
         unsigned char res_calloc[NUM_ALLOC_TESTS];
         for(int i = 0; i < NUM_ALLOC_TESTS; i++){
-                buff = xcalloc(1, 4096);
-                if(((uintptr_t) buff % ALIGN) == 0)
+                buff = xcalloc(1, PAGE_SIZE);
+                if(((uintptr_t) buff % CACHE_LINE) == 0)
                         res_calloc[i] = 1;
                 free(buff);
         }
@@ -48,18 +48,18 @@ test_mem_alloc(void)
                 sum += res_calloc[i];
 
         if(sum == NUM_ALLOC_TESTS)
-                printf("    " GREEN "- xcalloc: passed" RESET "\n");
+                printf(GREEN "- xcalloc: passed" RESET "\n");
         else
-                printf("    " RED "- xcalloc: failed" RESET "\n");
+                printf(RED "- xcalloc: failed" RESET "\n");
 
         /* Realloc Test */
-        char* dt = (char*) malloc(4096);
-        memset(dt, 0x1, 4096);
+        char* dt = (char*) malloc(PAGE_SIZE);
+        memset(dt, 0x1, PAGE_SIZE);
 
         unsigned char res_realloc[NUM_ALLOC_TESTS];
         for(int i = 0; i < NUM_ALLOC_TESTS; i++){
                 sum = 0;
-                buff = xrealloc(dt, 4097);
+                buff = xrealloc(dt, PAGE_SIZE + 1);
 
                 char* buff_cp = buff;
                 while (*buff_cp) {
@@ -67,7 +67,7 @@ test_mem_alloc(void)
                         buff_cp++;
                 }
 
-                if(((uintptr_t) buff % ALIGN) == 0 && sum == 4096)
+                if(((uintptr_t) buff % CACHE_LINE) == 0 && sum == PAGE_SIZE)
                         res_realloc[i] = 1;
                 free(buff);
         }
@@ -77,9 +77,9 @@ test_mem_alloc(void)
                 sum += res_realloc[i];
 
         if(sum == NUM_ALLOC_TESTS)
-                printf("    " GREEN "- xrealloc: passed" RESET "\n");
+                printf(GREEN "- xrealloc: passed" RESET "\n");
         else
-                printf("    " RED "- xrealloc: failed" RESET "\n");
+                printf(RED "- xrealloc: failed" RESET "\n");
 }
 
 int
