@@ -21,7 +21,7 @@ test_mem_alloc(void)
         unsigned char res_malloc[NUM_ALLOC_TESTS];
         for(i = 0; i < NUM_ALLOC_TESTS; i++){
                 buff = xmalloc(4096);
-                if(!buff && ((uintptr_t) buff % ALIGN) == 0)
+                if(((uintptr_t) buff % ALIGN) == 0)
                         res_malloc[i] = 1;
                 free(buff);
         }
@@ -39,7 +39,7 @@ test_mem_alloc(void)
         unsigned char res_calloc[NUM_ALLOC_TESTS];
         for(int i = 0; i < NUM_ALLOC_TESTS; i++){
                 buff = xcalloc(1, 4096);
-                if(!buff && ((uintptr_t) buff % ALIGN) == 0)
+                if(((uintptr_t) buff % ALIGN) == 0)
                         res_calloc[i] = 1;
                 free(buff);
         }
@@ -67,14 +67,14 @@ test_mem_alloc(void)
                         buff_cp++;
                 }
 
-                if(!buff && ((uintptr_t) buff % ALIGN) == 0 && sum == 4096)
+                if(((uintptr_t) buff % ALIGN) == 0 && sum == 4096)
                         res_realloc[i] = 1;
                 free(buff);
         }
 
         sum = 0;
         for(i = 0; i < NUM_ALLOC_TESTS; i++)
-                sum += res_calloc[i];
+                sum += res_realloc[i];
 
         if(sum == NUM_ALLOC_TESTS)
                 printf("    " GREEN "- xrealloc: passed" RESET "\n");
