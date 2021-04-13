@@ -18,7 +18,7 @@ cmd_max_args(const char* cmd, const int len)
         const int arg_sz[] = {1, 0, 0};
         const char* cmds[] = {"init", "doctor", "conf"};
 
-        for(int i = 0; i < CMD_CNT; i++)
+        for (int i = 0; i < CMD_CNT; i++)
                 if(strncmp(cmd, cmds[i], len) == 0)
                         return arg_sz[i];
 
@@ -34,18 +34,18 @@ parse_args(char** argv, const int max_args)
         int total_args = 0;
         unsigned int opts = 0x0;
 
-        while(*all_args){
-                if(total_args < max_args && *(*all_args) != '-'){
+        while (*all_args) {
+                if (total_args < max_args && *(*all_args) != '-') {
                         args[total_args] = *all_args;
                         total_args++;
                 } else {
-                        if(!strncmp(*all_args, "-r", 2))
+                        if (!strncmp(*all_args, "-r", 2))
                                 opts = opts | RECURSIVE_OPT;
                 }
                 all_args++;
         }
 
-        struct parsed_args ret = {.args = args, .opts = opts};
+        struct parsed_args ret = { args, opts };
         return ret;
 }
 
@@ -58,7 +58,7 @@ donut_main(int argc, char** argv)
         const char* cmd;
         int len, max_args;
 
-        if(!argv[1]){
+        if (!argv[1]) {
                 printf("No command was given.\n");
                 exit(0);
         }

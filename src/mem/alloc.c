@@ -2,6 +2,7 @@
 #include "stdlib.h"
 #include "string.h"
 #include "inttypes.h"
+#include "errno.h"
 
 void*
 xmalloc(size_t sz)
@@ -9,9 +10,9 @@ xmalloc(size_t sz)
         void* ret = malloc(sz + ALIGN);
         const int align = ALIGN - 1;
 
-        if(!ret){
+        if (!ret) {
                 printf("Failed to allocate memory.\n");
-                exit(1);
+                exit(ENOMEM);
         }
 
         uintptr_t bit_mask = ~(uintptr_t) align;
@@ -27,9 +28,9 @@ xcalloc(size_t n, size_t sz)
         void* ret = calloc(n, sz + ALIGN);
         const int align = ALIGN - 1;
 
-        if(!ret){
+        if (!ret) {
                 printf("Failed to allocate memory.\n");
-                exit(1);
+                exit(ENOMEM);
         }
 
         uintptr_t bit_mask = ~(uintptr_t) align;
@@ -41,9 +42,9 @@ xcalloc(size_t n, size_t sz)
 void*
 xrealloc(void* buff, size_t sz)
 {
-        if (!buff || !sz) {
-                printf("Trying to reallocate 0 bytes or null pointer.\n");
-                exit(1);
+        if (!buff) {
+                printf("Trying to reallocate null pointer.\n");
+                exit(EFAULT);
         }
 
         void* ret = xmalloc(sz);

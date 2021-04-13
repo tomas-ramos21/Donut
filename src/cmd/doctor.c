@@ -19,17 +19,20 @@ test_mem_alloc(void)
         /*  Malloc Test */
         printf("\n[Allocation Module]\n");
         unsigned char res_malloc[NUM_ALLOC_TESTS];
-        for(i = 0; i < NUM_ALLOC_TESTS; i++){
+
+        for (i = 0; i < NUM_ALLOC_TESTS; i++) {
                 buff = xmalloc(PAGE_SIZE);
-                if(((uintptr_t) buff % CACHE_LINE) == 0)
+
+                if (((uintptr_t) buff % CACHE_LINE) == 0)
                         res_malloc[i] = 1;
+
                 free(buff);
         }
 
-        for(i = 0; i < NUM_ALLOC_TESTS; i++)
+        for (i = 0; i < NUM_ALLOC_TESTS; i++)
                 sum += res_malloc[i];
 
-        if(sum == NUM_ALLOC_TESTS)
+        if (sum == NUM_ALLOC_TESTS)
                 printf(GREEN "- xmalloc: passed" RESET "\n");
         else
                 printf(RED "- xmalloc: failed" RESET "\n");
@@ -37,17 +40,20 @@ test_mem_alloc(void)
         /* Calloc Test */
         sum = 0;
         unsigned char res_calloc[NUM_ALLOC_TESTS];
-        for(int i = 0; i < NUM_ALLOC_TESTS; i++){
+
+        for (int i = 0; i < NUM_ALLOC_TESTS; i++) {
                 buff = xcalloc(1, PAGE_SIZE);
-                if(((uintptr_t) buff % CACHE_LINE) == 0)
+
+                if (((uintptr_t) buff % CACHE_LINE) == 0)
                         res_calloc[i] = 1;
+
                 free(buff);
         }
 
-        for(i = 0; i < NUM_ALLOC_TESTS; i++)
+        for (i = 0; i < NUM_ALLOC_TESTS; i++)
                 sum += res_calloc[i];
 
-        if(sum == NUM_ALLOC_TESTS)
+        if (sum == NUM_ALLOC_TESTS)
                 printf(GREEN "- xcalloc: passed" RESET "\n");
         else
                 printf(RED "- xcalloc: failed" RESET "\n");
@@ -67,16 +73,17 @@ test_mem_alloc(void)
                         buff_cp++;
                 }
 
-                if(((uintptr_t) buff % CACHE_LINE) == 0 && sum == PAGE_SIZE)
+                if (((uintptr_t) buff % CACHE_LINE) == 0 && sum == PAGE_SIZE)
                         res_realloc[i] = 1;
+
                 free(buff);
         }
 
         sum = 0;
-        for(i = 0; i < NUM_ALLOC_TESTS; i++)
+        for (i = 0; i < NUM_ALLOC_TESTS; i++)
                 sum += res_realloc[i];
 
-        if(sum == NUM_ALLOC_TESTS)
+        if (sum == NUM_ALLOC_TESTS)
                 printf(GREEN "- xrealloc: passed" RESET "\n");
         else
                 printf(RED "- xrealloc: failed" RESET "\n");
@@ -85,7 +92,6 @@ test_mem_alloc(void)
 int
 doctor(int argc, const char** argv, const unsigned int opts)
 {
-
         test_mem_alloc();
         return 0;
 }
