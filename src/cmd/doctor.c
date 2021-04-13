@@ -53,13 +53,13 @@ test_mem_alloc(void)
                 printf("    " RED "- xcalloc: failed" RESET "\n");
 
         /* Realloc Test */
-        char* dt = (char*) malloc(10);
-        memset(dt, 0x1, 10);
+        char* dt = (char*) malloc(4096);
+        memset(dt, 0x1, 4096);
 
         unsigned char res_realloc[NUM_ALLOC_TESTS];
         for(int i = 0; i < NUM_ALLOC_TESTS; i++){
                 sum = 0;
-                buff = xrealloc(dt, 11);
+                buff = xrealloc(dt, 4097);
 
                 char* buff_cp = buff;
                 while (*buff_cp) {
@@ -67,7 +67,7 @@ test_mem_alloc(void)
                         buff_cp++;
                 }
 
-                if(!buff && ((uintptr_t) buff % ALIGN) == 0 && sum == 10)
+                if(!buff && ((uintptr_t) buff % ALIGN) == 0 && sum == 4096)
                         res_realloc[i] = 1;
                 free(buff);
         }
