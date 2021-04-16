@@ -3,9 +3,9 @@
 #include "inttypes.h"
 
 struct slab {
-        uint32_t mem_t;   /* Total memory    */
-        uint32_t nr;      /* Node Count      */
-        void** slabs;     /* List of slabs   */
+        uint32_t mem; /* Total memory    */
+        uint32_t nr;  /* Node Count      */
+        void** slabs; /* List of slabs   */
 };
 
 
@@ -23,7 +23,7 @@ slab_alloc(struct slab* ptr, size_t slab_sz)
 
         /* Adjust slab bookkeeping state */
         ptr->nr++;
-        ptr->mem_t += sz;
+        ptr->mem += sz;
         *ptr->slabs++ = ret;
 
         return ret;
