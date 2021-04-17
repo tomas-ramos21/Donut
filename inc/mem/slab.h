@@ -3,7 +3,9 @@
 
 #include "stdio.h"
 
-struct slab* new_slab(void);
-void* slab_alloc(struct slab* ptr, size_t sz);
+struct slab* init_slab(void);
+void* alloc_slab(struct slab* ptr, size_t sz);
+int test_init_slab(void);
+int test_alloc_slab(void);
 
 #endif // __SLAB_H_

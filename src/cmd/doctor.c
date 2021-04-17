@@ -1,5 +1,6 @@
 #include "cmd/doctor.h"
 #include "mem/alloc.h"
+#include "mem/slab.h"
 #include "stdlib.h"
 #include "string.h"
 #include "misc/colour.h"
@@ -33,9 +34,25 @@ test_mem_alloc(void)
                 printf(RED "- xrealloc: failed" RESET "\n");
 }
 
+static void
+test_mem_slab(void)
+{
+        printf("\n[Slab Module]\n");
+        if (test_init_slab())
+                printf(GREEN "- init_slab: passed" RESET "\n");
+        else
+                printf(RED "- init_slab: failed" RESET "\n");
+
+        if (test_alloc_slab())
+                printf(GREEN "- alloc_slab: passed" RESET "\n");
+        else
+                printf(RED "- alloc_slab: failed" RESET "\n");
+}
+
 int
 doctor(int argc, const char** argv, const unsigned int opts)
 {
         test_mem_alloc();
+        test_mem_slab();
         return 0;
 }

@@ -85,10 +85,8 @@ test_xcalloc(int reps)
 void*
 xrealloc(void* buff, size_t sz)
 {
-        if (!buff) {
-                printf("Trying to reallocate null pointer.\n");
-                exit(EFAULT);
-        }
+        if (!buff)
+                return xmalloc(sz);
 
         void* ret = xmalloc(sz);
         char* ret_cp = ret;
