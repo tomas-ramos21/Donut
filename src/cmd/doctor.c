@@ -47,6 +47,11 @@ test_mem_slab(void)
                 printf(GREEN "- alloc_slab: passed" RESET "\n");
         else
                 printf(RED "- alloc_slab: failed" RESET "\n");
+
+        if (test_free_slab())
+                printf(GREEN "- free_slab: passed" RESET "\n");
+        else
+                printf(RED "- free_slab: failed" RESET "\n");
 }
 
 int

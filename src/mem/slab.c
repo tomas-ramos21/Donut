@@ -1,9 +1,9 @@
 #include "mem/slab.h"
 #include "mem/alloc.h"
+#include "stdlib.h"
 #include "inttypes.h"
 
 struct slab {
-        uint64_t mem;  /* Total memory  */
         uint32_t nd_t; /* Total nodes   */
         uint32_t nd_l; /* Nodes left    */
         void** slabs;  /* List of slabs */
@@ -21,7 +21,7 @@ int
 test_init_slab(void)
 {
         struct slab* p = init_slab();
-        return (!p->mem && !p->nd_t && !p->nd_l && !p->slabs && !p->curr) ? 1: 0;
+        return (!p->nd_t && !p->nd_l && !p->slabs && !p->curr) ? 1: 0;
 }
 
 void*
@@ -43,7 +43,6 @@ alloc_slab(struct slab* ptr, size_t slab_sz)
 
         /* Adjust slab bookkeeping state */
         ptr->nd_l--;
-        ptr->mem += sz;
         *ptr->curr = ret;
         ptr->curr++;
         return ret;
@@ -58,28 +57,61 @@ test_alloc_slab(void)
 
         /* Test Allocation below page size */
         ptr = init_slab();
-        pg = alloc_slab(ptr, PAGE_SIZE / 2);
-        if (ptr->mem == PAGE_SIZE &&
-            ptr->nd_l == 9 &&
+        pg = alloc_slab(ptr, PAGE_SIZE >> 1);
+        if (ptr->nd_l == 9 &&
             ptr->nd_t == 10 &&
             ptr->slabs &&
             pg &&
             *ptr->slabs == pg &&
             ptr->curr &&
-            ptr->curr == (ptr->slabs + sizeof(void)))
+            ptr->curr == (ptr->slabs + 1))
                 sum += 1;
 
         /* Test second allocation, but above page size */
-        pg = alloc_slab(ptr, PAGE_SIZE * 2);
-        if (ptr->mem == (PAGE_SIZE * 3) &&
-            ptr->nd_l == 8 &&
+        pg = alloc_slab(ptr, PAGE_SIZE << 1);
+        if (ptr->nd_l == 8 &&
             ptr->nd_t == 10 &&
-            (ptr->slabs + sizeof(void)) &&
+            (ptr->slabs + 1) &&
             pg &&
-            *(ptr->slabs + sizeof(void)) == pg &&
+            *(ptr->slabs + 1) == pg &&
             ptr->curr &&
-            ptr->curr == (ptr->slabs + sizeof(void) * 2))
+            ptr->curr == (ptr->slabs + 2))
                 sum += 1;
 
         return (sum == 2) ? 1 : 0;
+}
+
+void
+free_slab(struct slab* ptr, void* slab)
+{
+        void** slabs = ptr->slabs;
+        while (*slabs && *slabs != slab)
+                slabs++;
+
+        if (!*slabs)
+                return;
+
+        free(*slabs);
+        ptr->nd_l += 1;
+
+        void** nxt = ++slabs;
+        slabs--;
+        while ((*slabs++ = *nxt++));
+}
+
+int
+test_free_slab(void)
+{
+        struct slab* ptr = init_slab();
+        void* pg = alloc_slab(ptr, PAGE_SIZE);
+        void* pg2 = alloc_slab(ptr, PAGE_SIZE);
+
+        free_slab(ptr, pg);
+        if (*ptr->slabs == pg2 &&
+            *(ptr->slabs + 1) == 0x0 &&
+            ptr->nd_t == 10 &&
+            ptr->nd_l == 9)
+                return 1;
+        else
+                return 0;
 }
