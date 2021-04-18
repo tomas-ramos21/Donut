@@ -24,7 +24,7 @@ test_init_slab(void)
 }
 
 void*
-alloc_slab(struct slabs* ptr, size_t slab_sz)
+alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
 {
         size_t sz  = (slab_sz < PAGE_SIZE) ? PAGE_SIZE : slab_sz;
         void*  ret = xcalloc(1, sz);
@@ -81,7 +81,7 @@ test_alloc_slab(void)
 }
 
 void
-free_slab(struct slabs* ptr, void* slab)
+free_slab(struct slabs* restrict ptr, void* slab)
 {
         void** slabs = ptr->slabs;
         while (*slabs && *slabs != slab)
@@ -116,7 +116,7 @@ test_free_slab(void)
 }
 
 void
-clear_slabs(struct slabs* ptr)
+clear_slabs(struct slabs* restrict ptr)
 {
         void** slabs = ptr->slabs;
         while (*slabs) {
