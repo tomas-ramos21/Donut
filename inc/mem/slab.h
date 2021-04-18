@@ -1,10 +1,14 @@
 #ifndef __SLAB_H_
 #define __SLAB_H_
 
-#include "stdio.h"
+#include "stdlib.h"
 
-struct slab* init_slab(void);
-void* alloc_slab(struct slab* ptr, size_t sz);
+struct slabs* init_slabs(void);
+void* alloc_slab(struct slabs* ptr, size_t sz);
+void free_slab(struct slabs* ptr, void* slab);
+void clear_slabs(struct slabs* ptr);
+
+/* Unit tests */
 int test_init_slab(void);
 int test_alloc_slab(void);
 int test_free_slab(void);

@@ -1,9 +1,8 @@
 #include "mem/slab.h"
 #include "mem/alloc.h"
-#include "stdlib.h"
 #include "inttypes.h"
 
-struct slab {
+struct slabs {
         uint32_t nd_t; /* Total nodes   */
         uint32_t nd_l; /* Nodes left    */
         void** slabs;  /* List of slabs */
@@ -11,21 +10,21 @@ struct slab {
 };
 
 
-struct slab*
-init_slab(void)
+struct slabs*
+init_slabs(void)
 {
-        return xcalloc(1, sizeof(struct slab));
+        return xcalloc(1, sizeof(struct slabs));
 }
 
 int
 test_init_slab(void)
 {
-        struct slab* p = init_slab();
+        struct slabs* p = init_slabs();
         return (!p->nd_t && !p->nd_l && !p->slabs && !p->curr) ? 1: 0;
 }
 
 void*
-alloc_slab(struct slab* ptr, size_t slab_sz)
+alloc_slab(struct slabs* ptr, size_t slab_sz)
 {
         size_t sz  = (slab_sz < PAGE_SIZE) ? PAGE_SIZE : slab_sz;
         void*  ret = xcalloc(1, sz);
@@ -51,12 +50,12 @@ alloc_slab(struct slab* ptr, size_t slab_sz)
 int
 test_alloc_slab(void)
 {
-        struct slab* ptr;
+        struct slabs* ptr;
         void* pg;
         int sum = 0;
 
         /* Test Allocation below page size */
-        ptr = init_slab();
+        ptr = init_slabs();
         pg = alloc_slab(ptr, PAGE_SIZE >> 1);
         if (ptr->nd_l == 9 &&
             ptr->nd_t == 10 &&
@@ -82,7 +81,7 @@ test_alloc_slab(void)
 }
 
 void
-free_slab(struct slab* ptr, void* slab)
+free_slab(struct slabs* ptr, void* slab)
 {
         void** slabs = ptr->slabs;
         while (*slabs && *slabs != slab)
@@ -102,7 +101,7 @@ free_slab(struct slab* ptr, void* slab)
 int
 test_free_slab(void)
 {
-        struct slab* ptr = init_slab();
+        struct slabs* ptr = init_slabs();
         void* pg = alloc_slab(ptr, PAGE_SIZE);
         void* pg2 = alloc_slab(ptr, PAGE_SIZE);
 
@@ -114,4 +113,15 @@ test_free_slab(void)
                 return 1;
         else
                 return 0;
+}
+
+void
+clear_slabs(struct slabs* ptr)
+{
+        void** slabs = ptr->slabs;
+        while (*slabs) {
+                free(*slabs);
+                slabs++;
+        }
+        free(ptr);
 }

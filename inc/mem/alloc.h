@@ -6,6 +6,8 @@
 void* xmalloc(size_t sz);
 void* xcalloc(size_t n, size_t sz);
 void* xrealloc(void* buff, size_t sz);
+
+/* Unit tests */
 int test_xmalloc(int reps);
 int test_xcalloc(int reps);
 int test_xrealloc(int reps);
