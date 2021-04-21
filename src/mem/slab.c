@@ -13,7 +13,7 @@ struct slabs {
 struct slabs*
 init_slabs(void)
 {
-        return xcalloc(1, sizeof(struct slabs));
+        return calloc(1, sizeof(struct slabs));
 }
 
 int

@@ -2,7 +2,7 @@
 #include "stdio.h"
 
 void
-conf(int argc, const char** argv, const unsigned int opts)
+conf(const int argc, const struct parsed_args* args)
 {
         printf("Page Size: %u\n\
 Cache Line Size: %u\n\

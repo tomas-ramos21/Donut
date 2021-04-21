@@ -55,7 +55,7 @@ test_mem_slab(void)
 }
 
 int
-doctor(int argc, const char** argv, const unsigned int opts)
+doctor(const int argc, const struct parsed_args* args)
 {
         test_mem_alloc();
         test_mem_slab();

@@ -3,14 +3,12 @@
 #include "donut.h"
 #include "string.h"
 #include "cmd/cmd.h"
+#include "mem/slab.h"
+#include "inttypes.h"
 
 #define CMD_CNT 3
+#define MAX_ARG_SIZE 1024
 #define RECURSIVE_OPT 0x1
-
-struct parsed_args {
-        const char** args;
-        const unsigned int opts;
-};
 
 static int
 cmd_max_args(const char* cmd, const int len)
@@ -26,13 +24,18 @@ cmd_max_args(const char* cmd, const int len)
         exit(0);
 }
 
-static struct parsed_args
-parse_args(char** argv, const int max_args)
+static struct parsed_args*
+parse_args(const int arg_cp, char** argv, const int max_args, struct slabs* slabs)
 {
         char** all_args = &argv[2];
-        const char* args[max_args];
+        char* args[max_args];
         int total_args = 0;
         unsigned int opts = 0x0;
+
+        uintptr_t* slab = alloc_slab(slabs, (MAX_ARG_SIZE * max_args) + sizeof(unsigned int));
+        struct parsed_args* ret = (struct parsed_args*)slab;
+        slab += sizeof(struct parsed_args);
+        ret->args = (char*)slab;
 
         while (*all_args) {
                 if (total_args < max_args && *(*all_args) != '-') {
@@ -45,18 +48,23 @@ parse_args(char** argv, const int max_args)
                 all_args++;
         }
 
-        struct parsed_args ret = { args, opts };
+        ret->opts = opts;
+        char* cp = ret->args;
+        for (int i = 0; (i < max_args) && arg_cp; i++) {
+                strncpy(cp, args[i], MAX_ARG_SIZE);
+                cp += MAX_ARG_SIZE;
+        }
         return ret;
 }
 
-/* TODO: Replace printf with actual commands
- * TODO: Replace invalid/no command message with message displaying available commands
+/* TODO: Replace invalid/no command message with message displaying available commands
  */
 int
 donut_main(int argc, char** argv)
 {
         const char* cmd;
-        int len, max_args;
+        int len, max_args, argc_cp = argc - 2;
+        struct slabs* slabs = init_slabs();
 
         if (!argv[1]) {
                 printf("No command was given.\n");
@@ -66,19 +74,18 @@ donut_main(int argc, char** argv)
         cmd = argv[1];
         len = strlen(cmd);
         max_args = cmd_max_args(cmd, len);
-        const struct parsed_args args = parse_args(argv, max_args);
-
+        const struct parsed_args* args = parse_args(argc_cp, argv, max_args, slabs);
 
         if (strncmp("init", cmd, len) == 0)
-                init(max_args, args.args, args.opts);
+                donut_init(argc_cp, args);
         else if (strncmp("doctor", cmd, len) == 0)
-                doctor(max_args, args.args, args.opts);
+                doctor(argc_cp, args);
         else if (strncmp("conf", cmd, len) == 0)
-                conf(max_args, args.args, args.opts);
+                conf(argc_cp, args);
         else
                 printf("Unrecognized command");
 
-
+        clear_slabs(slabs);
         return 0;
 }
 
