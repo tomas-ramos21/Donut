@@ -15,12 +15,9 @@
 int
 donut_init(const int argc, const struct parsed_args* args)
 {
-        char* path = ".";
-        if (argc)
-                path = args->args;
-
         DIR* d_ptr;
         struct dirent* dir;
+        char* path = (argc) ? args->args : ".";
 
         if (!(d_ptr = opendir(path))) {
                  printf("Failed to open directory.\n");
