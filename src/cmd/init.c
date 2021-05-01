@@ -17,7 +17,12 @@ donut_init(const int argc, const struct parsed_args* args)
         char* path = (argc) ? args->args : ".";
 
         st = chdir(path);
-        st = st | mkdir(DONUT_FOLDER, DIR_CTOR_MODE);
+        if (st) {
+                printf(DONUT "Path provided is invalid.\n");
+                return -1;
+        }
+
+        st = mkdir(DONUT_FOLDER, DIR_CTOR_MODE);
         if (st) {
                 printf(DONUT "Failed initialization.\n");
                 return -1;
