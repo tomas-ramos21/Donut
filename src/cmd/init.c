@@ -13,7 +13,7 @@
 int
 donut_init(const int argc, const struct parsed_args* args)
 {
-        int st;
+        register int st;
         char* path = (argc) ? args->args : ".";
 
         st = chdir(path);
