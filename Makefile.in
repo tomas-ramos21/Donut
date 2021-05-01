@@ -108,13 +108,12 @@ install:
 	@echo [Donut] Installing Program into /usr/bin/local
 	@sudo mv $(BIN_DIR)/$(EXE) $(USR_DIR)
 	@echo [Donut] Installation Completed
-	@echo [Donut] Use -h or --help for argument options
+	@echo [Donut] Use \"donut help\" to learn about Donut
 
 # Clean Action
 clean:
 	@rm -r $(OBJ_DIR)
 	@rm -r $(BIN_DIR)
-	@rm $(SRC_DIR)/*.o
 	@rm -r "autom4te.cache/"
 	@rm -r "config.log"
 	@rm -r "config.status"
