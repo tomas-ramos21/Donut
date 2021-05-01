@@ -4,36 +4,42 @@
 #include "stdlib.h"
 #include "unistd.h"
 #include "mem/alloc.h"
+#include "const/const.h"
+#include "misc/decorations.h"
 #include "sys/stat.h"
 #include "sys/types.h"
 #include "dirent.h"
 #include "string.h"
 
-/*
- * TODO: Implement Donut init function
- * TODO: Move Donut's folder constants to a header
- */
+#define DIR_CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
+
 int
 donut_init(const int argc, const struct parsed_args* args)
 {
-        DIR* d_ptr;
-        struct dirent* dir;
-        const char* donut = ".donut";
-        int donut_exists = 0;
+        int st;
         char* path = (argc) ? args->args : ".";
 
-        if (!(d_ptr = opendir(path))) {
-                 printf("Failed to open directory.\n");
-                 return 1;
+        st = chdir(path);
+        st = st | mkdir(DONUT_FOLDER, DIR_CTOR_MODE);
+        if (st) {
+                printf(DONUT "Failed initialization.\n");
+                return -1;
         }
 
-        while ((dir = readdir(d_ptr))) {
-                if (strncmp(donut, dir->d_name, strlen(donut)) == 0) {
-                        donut_exists = 1;
-                        break;
-                }
+        st = st | chdir(DONUT_FOLDER);
+        st = st | mkdir(CONFIG_FOLDER, DIR_CTOR_MODE);
+        st = st | mkdir(NODE_FOLDER, DIR_CTOR_MODE);
+        st = st | mkdir(DATA_FOLDER, DIR_CTOR_MODE);
+
+        if (st) {
+                printf(DONUT "Failed initialization.\n");
+                rmdir(DATA_FOLDER);
+                rmdir(NODE_FOLDER);
+                rmdir(CONFIG_FOLDER);
+                chdir("..");
+                rmdir(DONUT_FOLDER);
+                return -1;
         }
-        printf("Exists: %d\n", donut_exists);
 
         return 0;
 }

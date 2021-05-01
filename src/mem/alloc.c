@@ -1,4 +1,5 @@
 #include "mem/alloc.h"
+#include "misc/decorations.h"
 #include "stdlib.h"
 #include "string.h"
 #include "inttypes.h"
@@ -11,7 +12,7 @@ xmalloc(size_t sz)
         const int align = CACHE_LINE - 1;
 
         if (!ret) {
-                printf("Failed to allocate memory.\n");
+                printf(DONUT "Failed to allocate memory.\n");
                 exit(ENOMEM);
         }
 
@@ -50,7 +51,7 @@ xcalloc(size_t n, size_t sz)
         const int align = CACHE_LINE - 1;
 
         if (!ret) {
-                printf("Failed to allocate memory.\n");
+                printf(DONUT "Failed to allocate memory.\n");
                 exit(ENOMEM);
         }
 

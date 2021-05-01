@@ -62,6 +62,7 @@ parse_args(const int arg_cp, char** argv, const int max_args, struct slabs* slab
 int
 donut_main(int argc, char** argv)
 {
+        int ret = 0;
         const char* cmd;
         int len, max_args, argc_cp = argc - 2;
         struct slabs* slabs = init_slabs();
@@ -77,15 +78,15 @@ donut_main(int argc, char** argv)
         const struct parsed_args* args = parse_args(argc_cp, argv, max_args, slabs);
 
         if (strncmp("init", cmd, len) == 0)
-                donut_init(argc_cp, args);
+                ret = donut_init(argc_cp, args);
         else if (strncmp("doctor", cmd, len) == 0)
-                doctor(argc_cp, args);
+                ret = doctor(argc_cp, args);
         else if (strncmp("conf", cmd, len) == 0)
                 conf(argc_cp, args);
         else
                 printf("Unrecognized command");
 
         clear_slabs(slabs);
-        return 0;
+        return ret;
 }
 
