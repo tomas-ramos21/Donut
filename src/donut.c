@@ -58,8 +58,6 @@ parse_args(const int arg_cp, char** argv, const int max_args, struct slabs* slab
         return ret;
 }
 
-/* TODO: Replace invalid/no command message with message displaying available commands
- */
 int
 donut_main(int argc, char** argv)
 {
