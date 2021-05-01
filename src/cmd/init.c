@@ -1,15 +1,9 @@
 #include "cmd/cmd.h"
 #include "unistd.h"
 #include "stdio.h"
-#include "stdlib.h"
-#include "unistd.h"
-#include "mem/alloc.h"
 #include "const/const.h"
 #include "misc/decorations.h"
 #include "sys/stat.h"
-#include "sys/types.h"
-#include "dirent.h"
-#include "string.h"
 
 #define DIR_CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 

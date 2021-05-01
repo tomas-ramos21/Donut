@@ -1,10 +1,8 @@
 #include "cmd/cmd.h"
 #include "mem/alloc.h"
 #include "mem/slab.h"
-#include "stdlib.h"
 #include "string.h"
 #include "misc/colour.h"
-#include "inttypes.h"
 
 #define NUM_ALLOC_TESTS 10
 
