@@ -3,24 +3,25 @@
 #include "donut.h"
 #include "string.h"
 #include "cmd/cmd.h"
+#include "misc/decorations.h"
 #include "mem/slab.h"
 #include "inttypes.h"
 
-#define CMD_CNT 3
+#define CMD_CNT 4
 #define MAX_ARG_SIZE 1024
 #define RECURSIVE_OPT 0x1
 
 static int
 cmd_max_args(const char* cmd, const int len)
 {
-        const int arg_sz[] = {1, 0, 0};
-        const char* cmds[] = {"init", "doctor", "conf"};
+        const int arg_sz[] = {1, 0, 0, 0};
+        const char* cmds[] = {"init", "doctor", "conf", "help"};
 
         for (int i = 0; i < CMD_CNT; i++)
                 if(strncmp(cmd, cmds[i], len) == 0)
                         return arg_sz[i];
 
-        printf("Invalid command: %s\n", cmd);
+        printf(DONUT "Invalid command: %s\n", cmd);
         exit(0);
 }
 
@@ -68,7 +69,7 @@ donut_main(int argc, char** argv)
         struct slabs* slabs = init_slabs();
 
         if (!argv[1]) {
-                printf("No command was given.\n");
+                printf(DONUT "No command was given.\n");
                 exit(0);
         }
 
@@ -83,8 +84,10 @@ donut_main(int argc, char** argv)
                 ret = doctor(argc_cp, args);
         else if (strncmp("conf", cmd, len) == 0)
                 conf(argc_cp, args);
+        else if (strncmp("help", cmd, len) == 0)
+                printf(HELP_CMD);
         else
-                printf("Unrecognized command");
+                printf(DONUT "Unrecognized command\n" HELP_CMD);
 
         clear_slabs(slabs);
         return ret;

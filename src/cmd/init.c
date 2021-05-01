@@ -13,6 +13,9 @@
 
 #define DIR_CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 
+/*
+ * TODO: Add creation of required files under each directory
+ */
 int
 donut_init(const int argc, const struct parsed_args* args)
 {
