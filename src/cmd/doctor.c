@@ -1,4 +1,4 @@
-#include "cmd/doctor.h"
+#include "cmd/cmd.h"
 #include "mem/alloc.h"
 #include "mem/slab.h"
 #include "stdlib.h"

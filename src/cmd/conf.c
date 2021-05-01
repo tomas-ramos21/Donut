@@ -1,4 +1,4 @@
-#include "cmd/conf.h"
+#include "cmd/cmd.h"
 #include "stdio.h"
 
 void

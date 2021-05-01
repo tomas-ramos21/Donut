@@ -1,4 +1,4 @@
-#include "cmd/init.h"
+#include "cmd/cmd.h"
 #include "unistd.h"
 #include "stdio.h"
 #include "stdlib.h"

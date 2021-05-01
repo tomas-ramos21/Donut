@@ -1,8 +1,10 @@
 #ifndef __CMD_H_
 #define __CMD_H_
 
-#include "cmd/init.h"
-#include "cmd/doctor.h"
-#include "cmd/conf.h"
+#include "donut.h"
+
+void conf(const int argc, const struct parsed_args* args);
+int donut_init(const int argc, const struct parsed_args* args);
+int doctor(const int argc, const struct parsed_args* args);
 
 #endif // __CMD_H_
