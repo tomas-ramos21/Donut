@@ -7,15 +7,15 @@
 #include "mem/slab.h"
 #include "inttypes.h"
 
-#define CMD_CNT 4
+#define CMD_CNT 5
 #define MAX_ARG_SIZE 1024
 #define RECURSIVE_OPT 0x1
 
 static int
 cmd_max_args(const char* cmd, const int len)
 {
-        const int arg_sz[] = {1, 0, 0, 0};
-        const char* cmds[] = {"init", "doctor", "conf", "help"};
+        const int arg_sz[] = {1, 0, 0, 0, 1};
+        const char* cmds[] = {"init", "doctor", "conf", "help", "chkin"};
 
         for (int i = 0; i < CMD_CNT; i++)
                 if(strncmp(cmd, cmds[i], len) == 0)
@@ -78,6 +78,8 @@ donut_main(int argc, char** argv)
 
         if (strncmp("init", cmd, len) == 0)
                 ret = donut_init(argc_cp, args);
+        else if (strncmp("chkin", cmd, len) == 0)
+                ret = chkin(argc_cp, args);
         else if (strncmp("doctor", cmd, len) == 0)
                 ret = doctor(argc_cp, args);
         else if (strncmp("conf", cmd, len) == 0)

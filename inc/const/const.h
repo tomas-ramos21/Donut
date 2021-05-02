@@ -2,8 +2,8 @@
 #define __CONST_H_
 
 #define DONUT_FOLDER ".donut"
-#define CONFIG_FOLDER "config"
-#define NODE_FOLDER "nodes"
-#define DATA_FOLDER "data"
+#define DATA_FOLDER ".donut/data"
+#define CONFIG_FILE "config"
+#define DATA_FOLDER_NAME "data"
 
 #endif // __CONST_H_
