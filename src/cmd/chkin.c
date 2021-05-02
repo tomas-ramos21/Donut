@@ -7,8 +7,8 @@
 #include "sys/types.h"
 #include "unistd.h"
 #include "dirent.h"
-#include "fcntl.h"
 #include "const/err.h"
+#include "io/fio.h"
 
 #define LARGE_FILE 52428800
 
@@ -56,7 +56,7 @@ chkin_file(const char* src, struct stat* f)
 {
         int dir_fd, fd, is_xl;
         off_t f_sz = f->st_size;
-        is_xl = (f_sz < LARGE_FILE) ? 0 : 1;
+        is_xl = (f_sz < LARGE_FILE) ? 1 : 0;
 
         /* Get memmory */
         struct slabs* slabs = init_slabs();
@@ -64,15 +64,11 @@ chkin_file(const char* src, struct stat* f)
 
         /* Open CWD */
         cwd = getcwd(cwd, PAGE_SIZE);
-        dir_fd = open(cwd, O_RDONLY);
-        if (dir_fd < 0) {
-                printf(DONUT "Failed to open PWD.\n");
-                exit(DEF_ERR);
-        }
+        dir_fd = xopen(cwd, O_RDONLY);
 
         /* Open file */
         f_sz = f->st_size;
-        fd = open(src, O_RDONLY);
+        fd = xopen(src, O_RDONLY);
         if (is_xl) {
                 printf(DONUT "Basic file transfer.\n");
         } else {
@@ -80,8 +76,8 @@ chkin_file(const char* src, struct stat* f)
         }
 
         /* Release resources */
-        close(dir_fd);
-        close(fd);
+        xclose(dir_fd);
+        xclose(fd);
         clear_slabs(slabs);
         return 0;
 }

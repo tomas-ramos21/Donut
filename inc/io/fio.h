@@ -2,6 +2,7 @@
 #define __FIO_H_
 
 #include "sys/types.h"
+#include "fcntl.h"
 
 int xopen(const char* path, int oflag);
 int xclose(int fd);
