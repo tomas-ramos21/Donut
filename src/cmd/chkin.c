@@ -49,7 +49,7 @@ transfer_large_file(struct slabs* slabs, int src_fd, int dst_fd)
 }
 
 /*
- * TODO: Implement
+ * TODO: Implement missing file transfers
  */
 static int
 chkin_file(const char* src, struct stat* f)
