@@ -1,14 +1,13 @@
 #include "cmd/cmd.h"
 #include "mem/alloc.h"
 #include "mem/slab.h"
+#include "io/fio.h"
 #include "string.h"
 #include "misc/colour.h"
 
 #define NUM_ALLOC_TESTS 10
 
-/*
- * Test the memory allocation function modules.
- */
+/* Test the memory allocation module */
 static void
 test_mem_alloc(void)
 {
@@ -32,6 +31,7 @@ test_mem_alloc(void)
                 printf(RED "- xrealloc: failed" RESET "\n");
 }
 
+/* Test the slab memory allocator module */
 static void
 test_mem_slab(void)
 {
@@ -52,10 +52,23 @@ test_mem_slab(void)
                 printf(RED "- free_slab: failed" RESET "\n");
 }
 
+/* Test the file I/O module */
+static void
+test_io_fio(void)
+{
+        printf("\n[File I/O Module]\n");
+        if (test_xopen())
+                printf(GREEN "- xopen: passed" RESET "\n");
+        else
+                printf(RED "- xopen: failed" RESET "\n");
+
+}
+
 int
 doctor(const int argc, const struct parsed_args* args)
 {
         test_mem_alloc();
         test_mem_slab();
+        test_io_fio();
         return 0;
 }

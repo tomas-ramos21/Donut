@@ -5,10 +5,8 @@
 #include "misc/decorations.h"
 #include "sys/errno.h"
 #include "unistd.h"
+#include "string.h"
 
-/*
- * TODO: Add unit tests
- */
 int
 xopen(const char* path, int oflag)
 {
@@ -30,6 +28,29 @@ xopen(const char* path, int oflag)
                 printf(DONUT "Failed to open file: %s\n", path);
                 exit(DEF_ERR);
         }
+}
+
+int
+test_xopen(void)
+{
+        int ret;
+        char* cwd = malloc(PAGE_SIZE);
+        cwd = getcwd(cwd, PAGE_SIZE);
+
+        /* Should be successful - All conditions are satisfied */
+        system("touch donut_test.txt");
+        cwd = strncat(cwd, "/donut_test.txt", 15);
+        ret = xopen(cwd, O_RDWR);
+        if (ret > 0) {
+                close(ret);
+                ret = 1;
+        } else {
+                ret = 0;
+        }
+        system("rm donut_test.txt");
+
+        free(cwd);
+        return ret;
 }
 
 /*

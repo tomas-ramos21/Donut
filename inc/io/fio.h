@@ -9,5 +9,7 @@ int xclose(int fd);
 size_t xread(int fd, void* buf, size_t nbyte);
 size_t xwrite(int fd, void* buf, size_t nbyte);
 
+/* Unit Tests */
+int test_xopen(void);
 
 #endif // __FIO_H_
