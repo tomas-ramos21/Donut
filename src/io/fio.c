@@ -4,6 +4,7 @@
 #include "stdlib.h"
 #include "misc/decorations.h"
 #include "sys/errno.h"
+#include "sys/stat.h"
 #include "unistd.h"
 #include "string.h"
 
@@ -53,9 +54,6 @@ test_xopen(void)
         return ret;
 }
 
-/*
- * TODO: Add unit tests
- */
 int
 xclose(int fd)
 {
@@ -70,6 +68,32 @@ xclose(int fd)
                 return ret;
         }
 }
+
+int
+test_xclose(void)
+{
+        int fd;
+        struct stat file = {0};
+        char* cwd = malloc(PAGE_SIZE);
+        cwd = getcwd(cwd, PAGE_SIZE);
+
+        /* Create a file and open it */
+        system("touch donut_test.txt");
+        cwd = strncat(cwd, "/donut_test.txt", 15);
+        fd = open(cwd, O_RDWR);
+        if (fd < 0)
+                return 0;
+
+        /* Close file and check if the descriptor is still accessible */
+        xclose(fd);
+        fd = fstat(fd, &file);
+        if (fd == 0)
+                return 0;
+
+        system("rm donut_test.txt");
+        return 1;
+}
+
 
 /*
  * TODO: Add unit tests

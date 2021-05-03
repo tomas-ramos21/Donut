@@ -62,6 +62,10 @@ test_io_fio(void)
         else
                 printf(RED "- xopen: failed" RESET "\n");
 
+        if (test_xclose())
+                printf(GREEN "- xclose: passed" RESET "\n");
+        else
+                printf(RED "- xclose: failed" RESET "\n");
 }
 
 int
