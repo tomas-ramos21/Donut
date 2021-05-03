@@ -114,7 +114,6 @@ install:
 clean:
 	@rm -r $(OBJ_DIR)
 	@rm -r $(BIN_DIR)
-	@rm -r "autom4te.cache/"
 	@rm -r "config.log"
 	@rm -r "config.status"
 	@rm -r "configure"
