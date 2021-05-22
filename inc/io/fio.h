@@ -12,5 +12,7 @@ size_t xwrite(int fd, void* buf, size_t nbyte);
 /* Unit Tests */
 int test_xopen(void);
 int test_xclose(void);
+int test_xwrite(void);
+int test_xread(void);
 
 #endif // __FIO_H_

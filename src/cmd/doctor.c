@@ -66,6 +66,16 @@ test_io_fio(void)
                 printf(GREEN "- xclose: passed" RESET "\n");
         else
                 printf(RED "- xclose: failed" RESET "\n");
+
+        if (test_xread())
+                printf(GREEN "- xread: passed" RESET "\n");
+        else
+                printf(RED "- xread: failed" RESET "\n");
+
+        if (test_xwrite())
+                printf(GREEN "- xwrite: passed" RESET "\n");
+        else
+                printf(RED "- xwrite: failed" RESET "\n");
 }
 
 int

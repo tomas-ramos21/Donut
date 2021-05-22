@@ -8,6 +8,10 @@
 #include "unistd.h"
 #include "string.h"
 
+#define TOUCH_PATH "/usr/bin/touch"
+#define TEST_FILE "donut_test.txt"
+
+
 int
 xopen(const char* path, int oflag)
 {
@@ -35,21 +39,31 @@ int
 test_xopen(void)
 {
         int ret;
+        struct stat file;
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
+        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, TEST_FILE, 15);
+        char* args[] = {TOUCH_PATH, TEST_FILE, NULL};
+        pid_t child;
+
+        if (stat(cwd, &file))
+                remove(cwd);
+
+        /* Create a test file */
+        if (!(child = fork())) {
+                int fail = execv(TOUCH_PATH, args);
+                fail = (fail == -1) ? 0 : 1;
+                exit(fail);
+        }
+
+        waitpid(child, &ret, 0);
+        if (ret != 0)
+                return 0;
 
         /* Should be successful - All conditions are satisfied */
-        system("touch donut_test.txt");
-        cwd = strncat(cwd, "/donut_test.txt", 15);
         ret = xopen(cwd, O_RDWR);
-        if (ret > 0) {
-                close(ret);
-                ret = 1;
-        } else {
-                ret = 0;
-        }
-        system("rm donut_test.txt");
-
+        remove(cwd);
         free(cwd);
         return ret;
 }
@@ -72,38 +86,39 @@ xclose(int fd)
 int
 test_xclose(void)
 {
-        int fd;
-        struct stat file = {0};
+        int ret;
+        struct stat file;
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
+        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, TEST_FILE, 15);
 
-        /* Create a file and open it */
-        system("touch donut_test.txt");
-        cwd = strncat(cwd, "/donut_test.txt", 15);
-        fd = open(cwd, O_RDWR);
-        if (fd < 0)
+        if (stat(cwd, &file))
+                remove(cwd);
+
+        ret = open(cwd, O_CREAT);
+        if (ret < 0)
                 return 0;
 
         /* Close file and check if the descriptor is still accessible */
-        xclose(fd);
-        fd = fstat(fd, &file);
-        if (fd == 0)
+        xclose(ret);
+        ret = fstat(ret, &file);
+        if (ret == 0)
                 return 0;
 
-        system("rm donut_test.txt");
+        remove(cwd);
+        free(cwd);
         return 1;
 }
 
 
 /*
- * TODO: Add unit tests
  * TODO: Check assembly. Might need "restrict" or re-order loop instructions
  */
 size_t
 xread(int fd, void* buf, size_t nbyte)
 {
-        size_t bytes_read;
-        size_t bytes = nbyte;
+        size_t bytes_read, bytes = nbyte;
 
         while (bytes) {
                 bytes_read = read(fd, buf, bytes);
@@ -123,29 +138,76 @@ xread(int fd, void* buf, size_t nbyte)
         return nbyte;
 }
 
-/*
- * TODO: Add unit tests
- * TODO: Check assembly. Might need "restrict" or re-order loop instructions
- */
+int
+test_xread()
+{
+        int ret;
+        size_t bytes = 21;
+        struct stat file;
+        char* str = "Do you like donuts?\n";
+        char* buf = malloc(bytes);
+        char* cwd = malloc(PAGE_SIZE);
+        cwd = getcwd(cwd, PAGE_SIZE);
+        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, TEST_FILE, 15);
+
+        if (stat(cwd, &file))
+                remove(cwd);
+
+        ret = open(cwd, O_RDWR | O_CREAT);
+        if (ret < 0)
+                return 0;
+
+        dprintf(ret, "%s", str);
+        lseek(ret, 0, SEEK_SET);
+        ret = xread(ret, buf, bytes);
+
+        return (!strncmp(str, buf, bytes)) ? 1 : 0;
+}
+
+
 size_t
 xwrite(int fd, void* buf, size_t nbyte)
 {
-        size_t written;
+        size_t written, bytes = nbyte;
 
-        while (nbyte) {
-                written = write(fd, buf, nbyte);
+        while (bytes) {
+                written = write(fd, buf, bytes);
 
                 if(errno == EINTR) {
                         continue;
-                } else if (written < 0) {
-                        printf(DONUT "Failed writing to file with error: %lu.\n",
+                } else if ((long)written < 0) {
+                        printf(DONUT "Failed writing to file with error: %ld.\n",
                                written);
                         exit(DEF_ERR);
                 }
 
-                nbyte = nbyte - written;
-
+                bytes = bytes - written;
         }
 
         return nbyte;
+}
+
+int
+test_xwrite(void)
+{
+        int ret;
+        size_t bytes = 20;
+        struct stat file;
+        char* str = "Do you like donuts?\n";
+        char* cwd = malloc(PAGE_SIZE);
+        cwd = getcwd(cwd, PAGE_SIZE);
+        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, TEST_FILE, 15);
+
+        if (stat(cwd, &file))
+                remove(cwd);
+
+        ret = open(cwd, O_RDWR | O_CREAT);
+        if (ret < 0)
+                return 0;
+
+        bytes = xwrite(ret, &str, bytes);
+        remove(cwd);
+        return (bytes == 20) ? 1 : 0;
 }
