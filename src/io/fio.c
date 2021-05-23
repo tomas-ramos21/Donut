@@ -47,7 +47,7 @@ test_xopen(void)
         char* args[] = {TOUCH_PATH, TEST_FILE, NULL};
         pid_t child;
 
-        if (stat(cwd, &file))
+        if (!stat(cwd, &file))
                 remove(cwd);
 
         /* Create a test file */
@@ -58,11 +58,15 @@ test_xopen(void)
         }
 
         waitpid(child, &ret, 0);
-        if (ret != 0)
-                return 0;
+        if (ret != 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
 
         /* Should be successful - All conditions are satisfied */
         ret = xopen(cwd, O_RDWR);
+
+cleanup_return:
         remove(cwd);
         free(cwd);
         return ret;
@@ -93,28 +97,29 @@ test_xclose(void)
         cwd = strncat(cwd, "/", 1);
         cwd = strncat(cwd, TEST_FILE, 15);
 
-        if (stat(cwd, &file))
+        if (!stat(cwd, &file))
                 remove(cwd);
 
         ret = open(cwd, O_CREAT);
-        if (ret < 0)
-                return 0;
+        if (ret < 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
 
         /* Close file and check if the descriptor is still accessible */
         xclose(ret);
         ret = fstat(ret, &file);
-        if (ret == 0)
-                return 0;
+        if (!ret)
+                goto cleanup_return;
+        ret = 1;
 
+cleanup_return:
         remove(cwd);
         free(cwd);
-        return 1;
+        return ret;
 }
 
 
-/*
- * TODO: Check assembly. Might need "restrict" or re-order loop instructions
- */
 size_t
 xread(int fd, void* buf, size_t nbyte)
 {
@@ -151,18 +156,28 @@ test_xread()
         cwd = strncat(cwd, "/", 1);
         cwd = strncat(cwd, TEST_FILE, 15);
 
-        if (stat(cwd, &file))
+        if (!stat(cwd, &file))
                 remove(cwd);
 
+        /* Create a File */
         ret = open(cwd, O_RDWR | O_CREAT);
-        if (ret < 0)
-                return 0;
+        if (ret < 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
 
+        /* Write into the file */
         dprintf(ret, "%s", str);
         lseek(ret, 0, SEEK_SET);
         ret = xread(ret, buf, bytes);
 
-        return (!strncmp(str, buf, bytes)) ? 1 : 0;
+        /* Check if string written matches */
+        ret = (!strncmp(str, buf, bytes)) ? 1 : 0;
+
+cleanup_return:
+        remove(cwd);
+        free(cwd);
+        return ret;
 }
 
 
@@ -192,7 +207,7 @@ int
 test_xwrite(void)
 {
         int ret;
-        size_t bytes = 20;
+        size_t bytes = 21;
         struct stat file;
         char* str = "Do you like donuts?\n";
         char* cwd = malloc(PAGE_SIZE);
@@ -200,14 +215,28 @@ test_xwrite(void)
         cwd = strncat(cwd, "/", 1);
         cwd = strncat(cwd, TEST_FILE, 15);
 
-        if (stat(cwd, &file))
+        if (!stat(cwd, &file))
                 remove(cwd);
 
+        /* Open or create file */
         ret = open(cwd, O_RDWR | O_CREAT);
-        if (ret < 0)
-                return 0;
+        if (ret < 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
 
+        /* Write into file */
         bytes = xwrite(ret, &str, bytes);
+
+        /* Check if file size matches the amount of bytes written */
+        fstat(ret, &file);
+        if (!fstat(ret, &file))
+                ret = (file.st_size == (long long)bytes) ? 1 : 0;
+        else
+                ret = 0;
+
+cleanup_return:
         remove(cwd);
-        return (bytes == 20) ? 1 : 0;
+        free(cwd);
+        return ret;
 }
