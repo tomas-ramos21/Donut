@@ -9,6 +9,7 @@
 #include "dirent.h"
 #include "const/err.h"
 #include "io/fio.h"
+#include "string.h"
 
 #define LARGE_FILE 52428800
 
@@ -58,12 +59,13 @@ chkin_file(const char* src, struct stat* f)
         off_t f_sz = f->st_size;
         is_xl = (f_sz < LARGE_FILE) ? 1 : 0;
 
-        /* Get memmory */
+        /* Get memory */
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
 
         /* Open CWD */
         cwd = getcwd(cwd, PAGE_SIZE);
+        cwd = strncat(cwd, DATA_FOLDER, 12);
         dir_fd = xopen(cwd, O_RDONLY);
 
         /* Open file */
