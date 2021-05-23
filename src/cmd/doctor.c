@@ -76,6 +76,16 @@ test_io_fio(void)
                 printf(GREEN "- xwrite: passed" RESET "\n");
         else
                 printf(RED "- xwrite: failed" RESET "\n");
+
+        if (test_xpread())
+                printf(GREEN "- xpread: passed" RESET "\n");
+        else
+                printf(RED "- xpread: failed" RESET "\n");
+
+        if (test_xpwrite())
+                printf(GREEN "- xpread: passed" RESET "\n");
+        else
+                printf(RED "- xpread: failed" RESET "\n");
 }
 
 int
