@@ -1,15 +1,22 @@
 #include "crypto/sha2.h"
 #include "inttypes.h"
 
-#define RR(a,b) (((a) >> (b)) | ((a) << (32-(b))))
+#define ROR(a,b) (((a) >> (b)) | ((a) << (32-(b))))
 #define LRS(a,b) ((a) >> (b))
 
 #define CH(x,y,z) (((x) & (y)) ^ ((~(x)) ^ (z)))
 #define MA(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
-#define S0(x) (RR((x),(2)) ^ RR((x),(13)) ^ RR((x),(22)))
-#define S1(x) (RR((x),(6)) ^ RR((x),(11)) ^ RR((x),(25)))
-#define S2(x)  (RR((x),7) ^ RR((x),(18)) ^ LRS((x),(3)))
-#define S3(x)  (RR((x),17) ^ RR((x),(19)) ^ LRS((x),(10)))
+#define S0(x) (ROR((x),(2)) ^ ROR((x),(13)) ^ ROR((x),(22)))
+#define S1(x) (ROR((x),(6)) ^ ROR((x),(11)) ^ ROR((x),(25)))
+#define S2(x)  (ROR((x),7) ^ ROR((x),(18)) ^ LRS((x),(3)))
+#define S3(x)  (ROR((x),17) ^ ROR((x),(19)) ^ LRS((x),(10)))
+
+/* TODO: Make sure structure size is correct. */
+struct hash_state {
+        uint32_t len;
+        uint32_t acc[64];
+        uint32_t dat[8];
+};
 
 static const uint32_t init[64] = {
         0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,
@@ -24,3 +31,43 @@ static const uint32_t init[64] = {
         0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,
         0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
+
+void*
+sha2_hash(void* restrict in, void* out, void* restrict buf)
+{
+        struct hash_state* hash = buf;
+        uint32_t* input = (uint32_t*)in;
+        uint32_t i = 0, j = 0, k = 0;
+
+        /* Initialize SHA2 state */
+        hash->len = 0;
+        hash->dat[0] = 0x6a09e667;
+        hash->dat[1] = 0xbb67ae85;
+        hash->dat[2] = 0x3c6ef372;
+        hash->dat[3] = 0xa54ff53a;
+        hash->dat[4] = 0x510e527f;
+        hash->dat[5] = 0x9b05688c;
+        hash->dat[6] = 0x1f83d9ab;
+        hash->dat[7] = 0x5be0cd19;
+
+        /* Process all blocks */
+        while (*input) {
+
+                /* Fill accumulator */
+                if (hash->len != 64) {
+                        hash->acc[k++] = *input;
+                        hash->len += 1;
+                        continue;
+                }
+
+                k = 0;
+
+                /* Process full accumulator */
+                for (; i < 16; i++, j += 4)
+                        continue;
+
+
+        }
+
+        return out;
+}
