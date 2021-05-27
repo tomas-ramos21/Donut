@@ -32,6 +32,7 @@ static const uint32_t init[64] = {
         0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
+/* TODO: Check assembly output */
 void*
 sha2_hash(void* restrict in, void* out, void* restrict buf)
 {
