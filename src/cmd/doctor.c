@@ -4,6 +4,7 @@
 #include "io/fio.h"
 #include "string.h"
 #include "misc/colour.h"
+#include "crypto/sha2.h"
 
 #define NUM_ALLOC_TESTS 10
 
@@ -88,11 +89,24 @@ test_io_fio(void)
                 printf(RED "- xpread: failed" RESET "\n");
 }
 
+static void
+test_crypto(void)
+{
+
+        printf("\n[Crypto Module]\n");
+        if (test_sha2())
+                printf(GREEN "- SHA2: passed" RESET "\n");
+        else
+                printf(RED "- SHA2: failed" RESET "\n");
+
+}
+
 int
 doctor(const int argc, const struct parsed_args* args)
 {
         test_mem_alloc();
         test_mem_slab();
         test_io_fio();
+        test_crypto();
         return 0;
 }

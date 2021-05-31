@@ -1,6 +1,9 @@
 #ifndef SHA2_H_
 #define SHA2_H_
 
-void* get_sha2(void* src, void* buf);
+#include "stdio.h"
+
+void sha2_hash(void* restrict in, void* out, void* restrict buf, size_t len);
+int test_sha2(void);
 
 #endif // SHA2_H_
