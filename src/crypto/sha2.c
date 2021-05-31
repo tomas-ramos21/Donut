@@ -160,16 +160,22 @@ opjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"};
 
         /* Temporary Buffers */
         char* out = calloc(1,32);
+        char* str = calloc(1,64);
         void* buf = calloc(1,sizeof(struct hash_state));
+        char* str_cp = str;
         char* out_cp = out;
 
         for (int i = 0; i < 4; i++) {
                 sha2_hash((uintptr_t*)tests[i], (uint8_t*)out, buf, strlen(tests[i]));
-                printf("hash result: ");
-                for (int i = 0; i < 32; i++)
-                        printf("%02hhx", *out++);
-                printf("\n");
+                int i = 0;
+                while (i < 32) {
+                        snprintf(str, 3, "%02hhx", *out++);
+                        str = str + 2;
+                        i++;
+                }
                 out = out_cp;
+                str = str_cp;
+                printf("hash result: %s\n", str);
         }
         return 0;
 }
