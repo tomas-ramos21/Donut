@@ -35,7 +35,7 @@ static const uint32_t k[64] = {
         0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
-inline static void
+static void
 xform(struct hash_state* restrict hash)
 {
         uint32_t a, b, c, d, e, f, g, h, t1, t2, i, j;
@@ -81,7 +81,7 @@ xform(struct hash_state* restrict hash)
         hash->hx[7] += h;
 }
 
-static void
+inline static void
 sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
 {
         memset(hash->data, 0x0, 64);
