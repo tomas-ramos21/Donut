@@ -158,24 +158,29 @@ opjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"};
         "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1",
         "cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1"};
 
-        /* Temporary Buffers */
         char* out = calloc(1,32);
         char* str = calloc(1,64);
         void* buf = calloc(1,sizeof(struct hash_state));
-        char* str_cp = str;
         char* out_cp = out;
+        int off = 0, res = 0, ret;
 
+        /* Run Tests */
         for (int i = 0; i < 4; i++) {
                 sha2_hash((uintptr_t*)tests[i], (uint8_t*)out, buf, strlen(tests[i]));
-                int i = 0;
-                while (i < 32) {
-                        snprintf(str, 3, "%02hhx", *out++);
-                        str = str + 2;
-                        i++;
+                while (off < 64) {
+                        ret = snprintf(str + off, 3, "%02hhx", *out++);
+                        if (ret != -1)
+                                off += ret;
                 }
                 out = out_cp;
-                str = str_cp;
-                printf("hash result: %s\n", str);
+                off = 0;
+                res = res | strncmp(str, results[i], 64);
         }
-        return 0;
+
+        /* Free resources */
+        free(out);
+        free(str);
+        free(buf);
+
+        return !res;
 }
