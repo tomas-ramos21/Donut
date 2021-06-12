@@ -2,9 +2,25 @@
 #include "stdlib.h"
 #include "string.h"
 
+/**
+ * @file sha2.c
+ *
+ * Self-contained implementation of SHA-2.
+ *
+ * Using an existing implementation of SHA-2 is boring and could lead to
+ * licensing problems. Therefore, it was opted to create a self-contained
+ * version for Donut. That way Donut isn't tied to a a third party for future
+ * optimisations or customised behaviour.
+ */
+
+/*
+ * TODO: Detect the endianess of the machine
+ * TODO: Change the return procedure depending on endianess
+ * TODO: Change the input procedure depending on endianess
+ */
+
 #define ROR(a,b) (((a) >> (b)) | ((a) << (32-(b))))
 #define LRS(a,b) ((a) >> (b))
-
 #define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
 #define MA(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
 #define S0(x) (ROR((x),(2)) ^ ROR((x),(13)) ^ ROR((x),(22)))
@@ -14,13 +30,22 @@
 
 #define BLK_SZ 64
 
+/**
+ * Buffer structure used to proccess SHA-2.
+ */
 struct hash_state {
-        uint64_t len;
-        uint32_t hx[8];
-        uint32_t acc[64];
-        uint8_t  data[64];
+        uint64_t len;      /**< Message length in bits */
+        uint32_t hx[8];    /**< Current hash state */
+        uint32_t acc[64];  /**< Current 32-bit words being processed */
+        uint8_t  data[64]; /**< Current 64 bytes being processed */
 };
 
+/**
+ * Round constants used to compute SHA-2.
+ *
+ * First 32-bit of the fractional parts of the square roots of the first
+ * 8 primes. All of the numbers are represented in big-endian format.
+ */
 static const uint32_t k[64] = {
         0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,
         0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,
@@ -35,6 +60,16 @@ static const uint32_t k[64] = {
         0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
+/**
+ * SHA-2 data transform process.
+ *
+ * Receives the current hash structure and proccesses the next 64 bytes of data.
+ * The data in the structure is converted to big-endian format, and the 64
+ * rounds of the SHA-2 transform are performed. Lastly, the current hash state
+ * is updated.
+ *
+ * @param hash The current state of the hash
+ */
 static void
 xform(struct hash_state* restrict hash)
 {
@@ -81,6 +116,17 @@ xform(struct hash_state* restrict hash)
         hash->hx[7] += h;
 }
 
+/**
+ * SHA-2 padding procedure.
+ *
+ * If there is a remainder of 56 bytes or more, then the data is padded and
+ * transformed again. Otherwise, the data is padded with zeros and the message's
+ * bit length before the last transformation. Lastly, the hash state is updated.
+ *
+ * @param hash The current hash state
+ * @param in The input buffer
+ * @param bytes The message's remaining byte count
+ */
 inline static void
 sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
 {
@@ -105,6 +151,18 @@ sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
         xform(hash);
 }
 
+/**
+ * Computes the SHA-2 hash of a given buffer.
+ *
+ * Computes the SHA-2 hash of a byte sequence. The hash state is initialized, then
+ * the data is changed to big-endian format and hashed. At the end the data is
+ * transformed back to little-endian format and return in the respective buffer.
+ *
+ * @param in Buffer whose content will be hash
+ * @param out Buffer where the result of the hashing process will be provided
+ * @param buf Buffer where the hash state will be stored during the procedure
+ * @param len Byte length of the input buffer
+ */
 void
 sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, size_t len)
 {
@@ -142,6 +200,13 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
         }
 }
 
+/**
+ * SHA-2 module's unit test.
+ *
+ * The code is tested over several vectors, by providing the input and expected
+ * output string representation of the hash. All examples were sourced from:
+ * https://www.di-mgt.com.au/sha_testvectors.html
+ */
 int
 test_sha2(void)
 {
