@@ -21,7 +21,7 @@ cmd_max_args(const char* cmd, const int len)
                 if(strncmp(cmd, cmds[i], len) == 0)
                         return arg_sz[i];
 
-        printf(DONUT "Invalid command: %s\n", cmd);
+        printf(DONUT_ERROR "Invalid command: %s\n", cmd);
         exit(0);
 }
 
@@ -87,7 +87,7 @@ donut_main(int argc, char** argv)
         else if (strncmp("help", cmd, len) == 0)
                 printf(HELP_CMD);
         else
-                printf(DONUT "Unrecognized command\n" HELP_CMD);
+                printf(DONUT_ERROR "Unrecognized command\n" HELP_CMD);
 
         clear_slabs(slabs);
         return ret;

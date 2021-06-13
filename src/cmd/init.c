@@ -11,6 +11,10 @@
  * Implements all functions, utilities used by the "init" command.
  */
 
+/**
+ * @def DIR_CTOR_MODE
+ * Flags used to create Donut directories.
+ */
 #define DIR_CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 
 /**

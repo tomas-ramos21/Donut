@@ -17,6 +17,10 @@
  * contain functions to build reports on what may have occurred with the system.
  */
 
+/**
+ * @def NUM_ALLOC_TESTS
+ * Number of repetetions for the memory allocation tests.
+ */
 #define NUM_ALLOC_TESTS 10
 
 /**

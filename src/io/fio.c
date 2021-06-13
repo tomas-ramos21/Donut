@@ -1,12 +1,14 @@
 #include "io/fio.h"
 #include "stdio.h"
 #include "const/err.h"
+#include "const/const.h"
 #include "stdlib.h"
 #include "misc/decorations.h"
 #include "sys/errno.h"
 #include "sys/stat.h"
 #include "unistd.h"
 #include "string.h"
+#include "const/nix_cmds.h"
 
 /**
  * @file fio.c
@@ -16,9 +18,6 @@
  * Provides a collection of "safer" file I/O functions which provide safeguard
  * towards common issues while using them.
  */
-
-#define TOUCH_PATH "/usr/bin/touch"
-#define TEST_FILE "donut_test.txt"
 
 /**
  * Simple wrapper of the standard "open" function.

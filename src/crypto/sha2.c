@@ -19,15 +19,58 @@
  * TODO: Change the input procedure depending on endianess
  */
 
+/**
+ * @def ROR
+ * Bitwise right rotate.
+ */
 #define ROR(a,b) (((a) >> (b)) | ((a) << (32-(b))))
+
+/**
+ * @def LRS
+ * Logical right shift.
+ */
 #define LRS(a,b) ((a) >> (b))
+
+/**
+ * @def CH
+ * SHA-2 Ch function.
+ */
 #define CH(x,y,z) (((x) & (y)) ^ (~(x) & (z)))
+
+/**
+ * @def MA
+ * SHA-2 Ma function.
+ */
 #define MA(x,y,z) (((x) & (y)) ^ ((x) & (z)) ^ ((y) & (z)))
+
+/**
+ * @def S0
+ * SHA-2 Sigma 0 function.
+ */
 #define S0(x) (ROR((x),(2)) ^ ROR((x),(13)) ^ ROR((x),(22)))
+
+/**
+ * @def S1
+ * SHA-2 Sigma 1 function.
+ */
 #define S1(x) (ROR((x),(6)) ^ ROR((x),(11)) ^ ROR((x),(25)))
+
+/**
+ * @def S2
+ * SHA-2 lower case Sigma 0 function.
+ */
 #define S2(x) (ROR((x),(7)) ^ ROR((x),(18)) ^ LRS((x),(3)))
+
+/**
+ * @def S3
+ * SHA-2 lower case Sigma 1 function.
+ */
 #define S3(x) (ROR((x),(17)) ^ ROR((x),(19)) ^ LRS((x),(10)))
 
+/**
+ * @def BLK_SZ
+ * SHA-2 block size in bytes.
+ */
 #define BLK_SZ 64
 
 /**
