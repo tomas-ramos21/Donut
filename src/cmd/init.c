@@ -5,8 +5,25 @@
 #include "misc/decorations.h"
 #include "sys/stat.h"
 
+/**
+ * @file init.c
+ *
+ * Implements all functions, utilities used by the "init" command.
+ */
+
 #define DIR_CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 
+/**
+ * Initializes donut in the current or provided path.
+ *
+ * Create the required setup to use donut in the current path or the path
+ * provided in the arguments. If the donut directory already exists it will not
+ * be initialized.
+ *
+ * @param argc Number of arguments passed
+ * @param args Array of arguments
+ * @returns In case of success returns 0 otherwise -1
+ */
 int
 donut_init(const int argc, const struct parsed_args* args)
 {

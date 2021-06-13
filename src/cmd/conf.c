@@ -1,6 +1,18 @@
 #include "cmd/cmd.h"
 #include "stdio.h"
 
+/**
+ * @file conf.c
+ *
+ * Implements all functions and utlities used by the "conf" command.
+ */
+
+/**
+ * Prints the current configuration detected and being used by donut.
+ *
+ * @param argc Number of arguments passed
+ * @param args Array of arguments
+ */
 void
 conf(const int argc, const struct parsed_args* args)
 {

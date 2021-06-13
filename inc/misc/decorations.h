@@ -1,6 +1,12 @@
 #ifndef __DECORATIONS_H_
 #define __DECORATIONS_H_
 
+/**
+ * @file decorations.h
+ *
+ * Contains all string decorations and messages to be used by Donut.
+ */
+
 #define DONUT "[Donut] "
 #define HELP_CMD "\nThese are common Donut commands used in various situations:\n \
 \n \

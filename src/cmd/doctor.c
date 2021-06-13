@@ -6,9 +6,25 @@
 #include "misc/colour.h"
 #include "crypto/sha2.h"
 
+/**
+ * @file doctor.c
+ *
+ * File containing the "doctor" command and all associated utilities.
+ *
+ * This file contains all functions used by the "doctor" command to test the
+ * integrity of the system. The purpose is to provide a module that can be used
+ * to detect issues with the installation or setup of the system. It will also
+ * contain functions to build reports on what may have occurred with the system.
+ */
+
 #define NUM_ALLOC_TESTS 10
 
-/* Test the memory allocation module */
+/**
+ * Execute all memory allocation module's unit tests.
+ *
+ * Executes all unit tests for the memory allocation module and prints onto the
+ * screen if they passed or failed.
+ */
 static void
 test_mem_alloc(void)
 {
@@ -32,7 +48,12 @@ test_mem_alloc(void)
                 printf(RED "- xrealloc: failed" RESET "\n");
 }
 
-/* Test the slab memory allocator module */
+/**
+ * Execute all slab allocator module's unit tests.
+ *
+ * Executes all unit tests for the slab allocator module and prints onto the
+ * screen if they passed or failed.
+ */
 static void
 test_mem_slab(void)
 {
@@ -53,7 +74,12 @@ test_mem_slab(void)
                 printf(RED "- free_slab: failed" RESET "\n");
 }
 
-/* Test the file I/O module */
+/**
+ * Execute all file I/O module's unit tests.
+ *
+ * Executes all unit tests for the file I/O module and prints onto the
+ * screen if they passed or failed.
+ */
 static void
 test_io_fio(void)
 {
@@ -89,6 +115,12 @@ test_io_fio(void)
                 printf(RED "- xpread: failed" RESET "\n");
 }
 
+/**
+ * Execute all cryptographic module's unit tests.
+ *
+ * Executes all unit tests for the cryptographic module and prints onto the
+ * screen if they passed or failed.
+ */
 static void
 test_crypto(void)
 {
@@ -101,6 +133,12 @@ test_crypto(void)
 
 }
 
+/**
+ * Display all unit tests results to the user.
+ *
+ * @param argc Number of arguments passed
+ * @param args Array of arguments
+ */
 int
 doctor(const int argc, const struct parsed_args* args)
 {
