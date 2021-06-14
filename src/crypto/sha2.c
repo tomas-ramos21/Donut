@@ -244,6 +244,25 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
 }
 
 /**
+ * Convert a hash into a string.
+ *
+ * Converts a hash into a string with it's hex representation.
+ *
+ * @param hash Pointer to hash buffer
+ * @param buf Buffer where the string value of the hash will be placed
+ */
+void
+sha2_to_str(uint8_t* hash, char* buf)
+{
+        int ret, off = 0;
+        while (off < 64) {
+                ret = snprintf(buf + off, 3, "%02hhx", *hash++);
+                if (ret != -1)
+                        off += ret;
+        }
+}
+
+/**
  * SHA-2 module's unit test.
  *
  * The code is tested over several vectors, by providing the input and expected

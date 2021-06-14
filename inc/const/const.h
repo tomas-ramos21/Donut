@@ -8,16 +8,28 @@
  */
 
 /**
- * @def DONUT_FOLDER
- * The main donut's folder where all it's information is stored.
+ * @def DONUT_FOLDER_RELATIVE
+ * Relative path to donut's folder where all it's information is stored.
  */
-#define DONUT_FOLDER ".donut"
+#define DONUT_FOLDER_RELATIVE ".donut"
+
+/**
+ * @def DONUT_FOLDER
+ * Donut's folder to be appended to path strings.
+ */
+#define DONUT_FOLDER "/.donut"
+
+/**
+ * @def DATA_FOLDER_RELATIVE
+ * Relative path to donut's folder where all the data is stored.
+ */
+#define DATA_FOLDER_RELATIVE ".donut/data"
 
 /**
  * @def DATA_FOLDER
- * The donut's folder where all the data is stored.
+ * Donut's data folder to be appended to path strings.
  */
-#define DATA_FOLDER ".donut/data"
+#define DATA_FOLDER "/.donut/data"
 
 /**
  * @def CONFIG_FILE
