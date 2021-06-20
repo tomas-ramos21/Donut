@@ -16,7 +16,7 @@
  * @param oflag Creation and status flags to be used
  * @returns Integer providing the file descriptor.
  */
-int xopen(const char* path, int oflag);
+int xopen(const char* path, int oflag, ...);
 
 /**
  * Simple wrapper of the standard "close" function.

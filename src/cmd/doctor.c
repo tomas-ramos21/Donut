@@ -1,6 +1,7 @@
 #include "cmd/cmd.h"
 #include "mem/alloc.h"
 #include "mem/slab.h"
+#include "mem/mem_utils.h"
 #include "io/fio.h"
 #include "string.h"
 #include "misc/colour.h"
@@ -135,6 +136,26 @@ test_crypto(void)
         else
                 printf(RED "- SHA2: failed" RESET "\n");
 
+        if (test_sha2_init())
+                printf(GREEN "- sha2_init: passed" RESET "\n");
+        else
+                printf(RED "- sha2_init: failed" RESET "\n");
+}
+
+/**
+ * Execute all memory utility functions module's unit tests.
+ *
+ * Executes all unit tests for the memory utility module and prints onto the
+ * screen if they passed or failed.
+ */
+static void
+test_memory_utilities(void)
+{
+        printf("\n[Memory Utilities Module]\n");
+        if (test_const_memcmp())
+                printf(GREEN "- const_memcmp: passed" RESET "\n");
+        else
+                printf(RED "- const_memcmp: failed" RESET "\n");
 }
 
 /**
@@ -150,5 +171,6 @@ doctor(const int argc, const struct parsed_args* args)
         test_mem_slab();
         test_io_fio();
         test_crypto();
+        test_memory_utilities();
         return 0;
 }

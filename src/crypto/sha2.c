@@ -104,6 +104,26 @@ static const uint32_t k[64] = {
 };
 
 /**
+ * Initialize the hash state structure.
+ *
+ * @param buf Buffer in which the structure will be stored
+ */
+void
+sha2_init(void* buf)
+{
+        struct hash_state* hash = buf;
+        hash->len = 0;
+        hash->hx[0] = 0x6a09e667;
+        hash->hx[1] = 0xbb67ae85;
+        hash->hx[2] = 0x3c6ef372;
+        hash->hx[3] = 0xa54ff53a;
+        hash->hx[4] = 0x510e527f;
+        hash->hx[5] = 0x9b05688c;
+        hash->hx[6] = 0x1f83d9ab;
+        hash->hx[7] = 0x5be0cd19;
+}
+
+/**
  * SHA-2 data transform process.
  *
  * Receives the current hash structure and proccesses the next 64 bytes of data.
@@ -195,6 +215,43 @@ sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
 }
 
 /**
+ * This function processes 64 bytes of data and ypdates the hash state.
+ *
+ * @param in Input buffer containing the data to be processed
+ * @param buf Buffer containg the current hash state
+ */
+void
+sha2_update(void* in, void* out, void* buf, size_t bytes)
+{
+        struct hash_state* hash = buf;
+        uint8_t* in_cp = in;
+        uint8_t* out_cp = out;
+        uint64_t blks = bytes / BLK_SZ;
+        uint64_t rem = bytes % BLK_SZ;
+
+        while (blks--) {
+                memcpy(hash->data, in_cp, BLK_SZ);
+                xform(hash);
+                in_cp += BLK_SZ;
+        }
+
+        if (rem) {
+                sha2_padding(hash, (uintptr_t*)in_cp, rem);
+
+                for (int i = 0; i < 4; i++) {
+                        out_cp[i]      = (hash->hx[0] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 4]  = (hash->hx[1] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 8]  = (hash->hx[2] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 12] = (hash->hx[3] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 16] = (hash->hx[4] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 20] = (hash->hx[5] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 24] = (hash->hx[6] >> (24 - i * 8)) & 0x000000ff;
+                        out_cp[i + 28] = (hash->hx[7] >> (24 - i * 8)) & 0x000000ff;
+                }
+        }
+}
+
+/**
  * Computes the SHA-2 hash of a given buffer.
  *
  * Computes the SHA-2 hash of a byte sequence. The hash state is initialized, then
@@ -260,6 +317,26 @@ sha2_to_str(uint8_t* hash, char* buf)
                 if (ret != -1)
                         off += ret;
         }
+}
+
+int
+test_sha2_init(void)
+{
+        int ret = 0;
+        struct hash_state* hash = malloc(sizeof(struct hash_state));
+
+        sha2_init(hash);
+        ret = !(hash->len == 0);
+        ret |= !(hash->hx[0] == 0x6a09e667);
+        ret |= !(hash->hx[1] == 0xbb67ae85);
+        ret |= !(hash->hx[2] == 0x3c6ef372);
+        ret |= !(hash->hx[3] == 0xa54ff53a);
+        ret |= !(hash->hx[4] == 0x510e527f);
+        ret |= !(hash->hx[5] == 0x9b05688c);
+        ret |= !(hash->hx[6] == 0x1f83d9ab);
+        ret |= !(hash->hx[7] == 0x5be0cd19);
+
+        return !ret;
 }
 
 /**

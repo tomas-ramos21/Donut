@@ -9,6 +9,7 @@
 #include "unistd.h"
 #include "string.h"
 #include "const/nix_cmds.h"
+#include "stdarg.h"
 
 /**
  * @file fio.c
@@ -32,18 +33,19 @@
  * @returns Integer providing the file descriptor.
  */
 int
-xopen(const char* path, int oflag)
+xopen(const char* path, int oflag, ...)
 {
-        int fd;
+        int fd, mode = 0;
+        va_list ap;
 
-        if (oflag < O_RDONLY || oflag > O_RDWR) {
-                printf(DONUT "Invalid flags passed for file opening.\n");
-                exit(DEF_ERR);
-        }
+        va_start(ap, oflag);
+        if (oflag & O_CREAT)
+                mode = va_arg(ap, int);
+        va_end(ap);
 
         while (1) {
 
-                fd = open(path, oflag);
+                fd = open(path, oflag, mode);
                 if (fd > 0)
                         return fd;
                 else if (errno == EINTR)
@@ -177,7 +179,7 @@ cleanup_return:
 size_t
 xread(int fd, void* buf, size_t nbyte)
 {
-        size_t bytes_read, bytes = nbyte;
+        size_t bytes_read, acc = 0, bytes = nbyte;
 
         while (bytes) {
                 bytes_read = read(fd, buf, bytes);
@@ -185,16 +187,17 @@ xread(int fd, void* buf, size_t nbyte)
                 if(errno == EINTR) {
                         continue;
                 } else if (!bytes_read) {
-                        return nbyte;
+                        return acc;
                 } else if (bytes_read < 0) {
                         printf(DONUT "Failed reading from file with error: %lu.\n",
                                bytes_read);
                         exit(DEF_ERR);
                 }
 
+                acc += bytes_read;
                 bytes = bytes - bytes_read;
         }
-        return nbyte;
+        return acc;
 }
 
 /**

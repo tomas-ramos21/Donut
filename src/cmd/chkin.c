@@ -13,12 +13,13 @@
 #include "string.h"
 
 #define LARGE_FILE 52428800
+#define CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
 
 
 /*
  * TODO: Add more conditions to "validate_init" in the future.
  * TODO: Implement "chkin_dir"
- * TODO: Implement "transfer_large_file"
+ * TODO: Implement "transfer_large_file" option
  * TODO: Implement "missing_file_transfer"
  */
 
@@ -55,39 +56,58 @@ transfer_large_file(struct slabs* slabs, int src_fd, int dst_fd)
 static int
 chkin_file(const char* src, struct stat* f)
 {
-        int dir_fd, fd, is_xl;
-        off_t f_sz = f->st_size;
-        is_xl = (f_sz > LARGE_FILE) ? 1 : 0;
+        off_t f_sz = f->st_size, bytes;
+        int dst_fd, src_fd;
+        int t_pgs = (f_sz / PAGE_SIZE) + !((f_sz % PAGE_SIZE) == 0);
+        void* pgs[t_pgs];
 
         /* Get memory */
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
+        char* str = alloc_slab(slabs, PAGE_SIZE);
 
-        /* Open CWD */
+        /* Get CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
         cwd = strncat(cwd, DATA_FOLDER, 12);
-        dir_fd = xopen(cwd, O_RDONLY);
-
-        /* Open file */
         f_sz = f->st_size;
-        fd = xopen(src, O_RDONLY);
-        if (is_xl) {
-                transfer_large_file(slabs, fd, dir_fd);
-        } else {
-                printf(DONUT "Basic file transfer.\n");
-                void* pg = alloc_slab(slabs, f_sz);
-                uint8_t* hash = alloc_slab(slabs, PAGE_SIZE);
-                void* hx = alloc_slab(slabs, PAGE_SIZE);
-                char* str = alloc_slab(slabs, PAGE_SIZE);
-                f_sz = xread(fd, pg, f_sz);
-                sha2_hash(pg, hash, hx, f_sz);
-                sha2_to_str(hash, str);
-                printf("Hash: %s\n", str);
+        src_fd = xopen(src, O_RDONLY);
+
+        /* Read Data */
+        int i = 0;
+        void* hash = alloc_slab(slabs, PAGE_SIZE);
+        sha2_init(hash);
+        while(t_pgs--){
+                pgs[i] = alloc_slab(slabs, PAGE_SIZE);
+                bytes = xread(src_fd, pgs[i], PAGE_SIZE);
+                sha2_update(pgs[i++], str, hash, bytes);
         }
+        sha2_to_str(str, str + 65);
+        str += 65;
+        printf("Hash: %s\n", str);
+
+
+        /* Get Sha-2 */
+        /* f_sz = f->st_size; */
+        /* uint8_t* hash = alloc_slab(slabs, PAGE_SIZE); */
+        /* void* hx = hash + 65; */
+        /* void* str = hash + 65 + 365; */
+        /* sha2_hash(pg, hash, hx, f_sz); */
+        /* sha2_to_str(hash, str); */
+        /* memset(str--, 0x0, 64); */
+        /* *hash = '/'; */
+
+        /* strncpy((char*)(hash + 1), (char*)(hash + 65 + 365), 32); */
+        /* printf("Hash: %s\n", hash); */
+        /* printf("CWD: %s\n", cwd); */
+        /* char* name = strncat(cwd, hash, 32 + 1); */
+        /* printf("File Path: %s\n", name); */
+        /* dst_fd = xopen(name, O_RDWR | O_CREAT, 0755); */
+        /* f_sz = xwrite(dst_fd, pg, f_sz); */
 
         /* Release resources */
-        xclose(dir_fd);
-        xclose(fd);
+        /* xclose(dir_fd); */
+        /* xclose(src_fd); */
+        /* xclose(dst_fd); */
         clear_slabs(slabs);
         return 0;
 }
