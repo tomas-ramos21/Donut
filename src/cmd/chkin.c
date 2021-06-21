@@ -47,36 +47,28 @@ chkin_dir(const char* src)
 }
 
 static int
-transfer_large_file(struct slabs* slabs, int src_fd, int dst_fd)
-{
-        printf(DONUT "Called Large transfer.");
-        return 0;
-}
-
-static int
 chkin_file(const char* src, struct stat* f)
 {
         off_t f_sz = f->st_size, bytes;
-        int dst_fd, src_fd;
+        int dst_fd, src_fd, i;
         int t_pgs = (f_sz / PAGE_SIZE) + !((f_sz % PAGE_SIZE) == 0);
         void* pgs[t_pgs];
 
         /* Get memory */
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
-        char* str = alloc_slab(slabs, PAGE_SIZE);
+        void* hash = alloc_slab(slabs, PAGE_SIZE);
+        uint8_t* str = ((uint8_t*)hash + 365);
 
         /* Get CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
         cwd = strncat(cwd, DATA_FOLDER, 12);
-        f_sz = f->st_size;
         src_fd = xopen(src, O_RDONLY);
 
-        /* Read Data */
-        int i = 0;
-        void* hash = alloc_slab(slabs, PAGE_SIZE);
+        /* Read data & compute SHA-2 Simultaneously */
+        i = 0;
         sha2_init(hash);
-        while(t_pgs--){
+        while (t_pgs--) {
                 pgs[i] = alloc_slab(slabs, PAGE_SIZE);
                 bytes = xread(src_fd, pgs[i], PAGE_SIZE);
                 sha2_update(pgs[i++], str, hash, bytes);
@@ -85,6 +77,7 @@ chkin_file(const char* src, struct stat* f)
         str += 65;
         printf("Hash: %s\n", str);
 
+        /*  */
 
         /* Get Sha-2 */
         /* f_sz = f->st_size; */
