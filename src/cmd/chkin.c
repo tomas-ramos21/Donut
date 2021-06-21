@@ -12,9 +12,7 @@
 #include "io/fio.h"
 #include "string.h"
 
-#define LARGE_FILE 52428800
 #define CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
-
 
 /*
  * TODO: Add more conditions to "validate_init" in the future.
@@ -50,7 +48,7 @@ static int
 chkin_file(const char* src, struct stat* f)
 {
         off_t f_sz = f->st_size, bytes;
-        int dst_fd, src_fd, i;
+        int src_fd, i;
         int t_pgs = (f_sz / PAGE_SIZE) + !((f_sz % PAGE_SIZE) == 0);
         void* pgs[t_pgs];
 
@@ -58,7 +56,7 @@ chkin_file(const char* src, struct stat* f)
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
         void* hash = alloc_slab(slabs, PAGE_SIZE);
-        uint8_t* str = ((uint8_t*)hash + 365);
+        uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
         /* Get CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
@@ -73,8 +71,8 @@ chkin_file(const char* src, struct stat* f)
                 bytes = xread(src_fd, pgs[i], PAGE_SIZE);
                 sha2_update(pgs[i++], str, hash, bytes);
         }
-        sha2_to_str(str, str + 65);
-        str += 65;
+        sha2_to_str(str, (char*)(str + SHA_BLK_SZ));
+        str += SHA_BLK_SZ;
         printf("Hash: %s\n", str);
 
         /* Get list of existing hashes */

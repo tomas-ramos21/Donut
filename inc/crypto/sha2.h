@@ -5,6 +5,18 @@
 #include "stdint.h"
 
 /**
+ * @def SHA2_BLK_SZ
+ * SHA-2 block size in bytes.
+ */
+#define SHA_BLK_SZ 64
+
+/**
+ * @def SHA2_STRUCT_SZ
+ * SHA-2 state structure size in bytes.
+ */
+#define SHA_STRUCT_SZ 360
+
+/**
  * Computes the SHA-2 hash of a given buffer.
  *
  * Computes the SHA-2 hash of a byte sequence. The hash state is initialized, then

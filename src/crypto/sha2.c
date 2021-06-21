@@ -193,13 +193,13 @@ xform(struct hash_state* restrict hash)
 inline static void
 sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
 {
-        memset(hash->data, 0x0, 64);
+        memset(hash->data, 0x0, SHA_BLK_SZ);
         memcpy(hash->data, in, bytes);
         hash->data[bytes] = 0x80;
 
         if (bytes >= 56) {
                 xform(hash);
-                memset(hash->data, 0x0, 64);
+                memset(hash->data, 0x0, SHA_BLK_SZ);
         }
 
         hash->len += bytes * 8;
@@ -226,13 +226,13 @@ sha2_update(void* in, void* out, void* buf, size_t bytes)
         struct hash_state* hash = buf;
         uint8_t* in_cp = in;
         uint8_t* out_cp = out;
-        uint64_t blks = bytes / BLK_SZ;
-        uint64_t rem = bytes % BLK_SZ;
+        uint64_t blks = bytes / SHA_BLK_SZ;
+        uint64_t rem = bytes % SHA_BLK_SZ;
 
         while (blks--) {
-                memcpy(hash->data, in_cp, BLK_SZ);
+                memcpy(hash->data, in_cp, SHA_BLK_SZ);
                 xform(hash);
-                in_cp += BLK_SZ;
+                in_cp += SHA_BLK_SZ;
         }
 
         if (rem) {
@@ -267,7 +267,7 @@ void
 sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, size_t len)
 {
         struct hash_state* hash = buf;
-        uint64_t rm, i, blks = len / BLK_SZ;
+        uint64_t rm, i, blks = len / SHA_BLK_SZ;
 
         hash->len = blks * 512;
         hash->hx[0] = 0x6a09e667;
@@ -280,12 +280,12 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
         hash->hx[7] = 0x5be0cd19;
 
         for (i = 0; i < blks; i++) {
-                memcpy(hash->data, in, BLK_SZ);
-                in += (BLK_SZ / 8);
+                memcpy(hash->data, in, SHA_BLK_SZ);
+                in += (SHA_BLK_SZ / 8);
                 xform(hash);
         }
 
-        rm = len - (BLK_SZ * blks);
+        rm = len - (SHA_BLK_SZ * blks);
         sha2_padding(hash, in, rm);
 
         for (i = 0; i < 4; i++) {
@@ -312,7 +312,7 @@ void
 sha2_to_str(uint8_t* hash, char* buf)
 {
         int ret, off = 0;
-        while (off < 64) {
+        while (off < SHA_BLK_SZ) {
                 ret = snprintf(buf + off, 3, "%02hhx", *hash++);
                 if (ret != -1)
                         off += ret;

@@ -40,12 +40,12 @@ donut_init(const int argc, const struct parsed_args* args)
                 return -1;
         }
 
-        st = mkdir(DONUT_FOLDER, DIR_CTOR_MODE);
-        st = st | mkdir(DATA_FOLDER, DIR_CTOR_MODE);
+        st = mkdir(DONUT_FOLDER_RELATIVE, DIR_CTOR_MODE);
+        st = st | mkdir(DATA_FOLDER_RELATIVE, DIR_CTOR_MODE);
         if (st) {
                 printf(DONUT "Failed initialization.\n");
-                rmdir(DONUT_FOLDER);
-                rmdir(DATA_FOLDER);
+                rmdir(DONUT_FOLDER_RELATIVE);
+                rmdir(DATA_FOLDER_RELATIVE);
                 return -1;
         }
 

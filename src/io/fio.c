@@ -4,6 +4,7 @@
 #include "const/const.h"
 #include "stdlib.h"
 #include "misc/decorations.h"
+#include "misc/colour.h"
 #include "sys/errno.h"
 #include "sys/stat.h"
 #include "unistd.h"
@@ -261,7 +262,7 @@ cleanup_return:
 size_t
 xpread(int fd, void* restrict buf, size_t nbyte, off_t offset)
 {
-        size_t bytes_read, bytes = nbyte;
+        size_t bytes_read, acc = 0, bytes = nbyte;
 
         while (bytes) {
                 bytes_read = pread(fd, buf, bytes, offset);
@@ -269,7 +270,7 @@ xpread(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 if(errno == EINTR) {
                         continue;
                 } else if (!bytes_read) {
-                        return nbyte;
+                        return acc;
                 } else if (bytes_read < 0) {
                         printf(DONUT "Failed reading from file with error: %lu.\n",
                                bytes_read);
@@ -277,9 +278,10 @@ xpread(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 }
 
                 offset = offset + bytes_read;
+                acc += bytes_read;
                 bytes = bytes - bytes_read;
         }
-        return nbyte;
+        return acc;
 }
 
 /**
@@ -486,4 +488,79 @@ cleanup_return:
         remove(cwd);
         free(cwd);
         return ret;
+}
+
+/**
+ * Simple wrapper of the "opendir" function.
+ *
+ * Wrapper around the standard "opendir" function that ensures the directory is
+ * opened properly, otherwise the function will cause the code to exit with an
+ * error.
+ *
+ * @param path String containing the directory of the path to open.
+ * @returns Pointer to open directory.
+ */
+DIR*
+xopendir(const char* path)
+{
+        DIR* dir = opendir(path);
+
+        if (!dir) {
+                printf(RED DONUT RESET "Failed to open the directory: %s\n", path);
+                exit(DEF_ERR);
+        }
+
+        return dir;
+}
+
+/**
+ * Unit test for opendir which attempts to open the "Home" directory.
+ *
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
+int
+test_xopendir(void)
+{
+        const char* path = getenv("HOME");
+        DIR* dir = opendir(path);
+        return (dir) ? 1 : 0;
+}
+
+/**
+ * Simple wrapper of the "closedir" function.
+ *
+ * Wrapper around the standard "closedir" function that ensures the directory is
+ * closed properly, otherwise the function will cause the code to exit with an
+ * error.
+ *
+ * @param path Pointer to the directory structure.
+ * @returns Integer indicating if the close procedure was successful.
+ */
+int
+xclosedir(DIR* dir)
+{
+        int ret = closedir(dir);
+
+        if (ret) {
+                printf(RED DONUT RESET "Failed to close directory.\n");
+                exit(DEF_ERR);
+        }
+
+        return ret;
+}
+
+/**
+ * Unit test for closedir which attempts to open the "Home" directory and then
+ * close it.
+ *
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
+int
+test_xclosedir(void)
+{
+        const char* path = getenv("HOME");
+        DIR* dir = opendir(path);
+        int ret = (dir) ? 1 : 0;
+        ret = xclosedir(dir);
+        return !ret;
 }

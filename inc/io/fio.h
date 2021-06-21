@@ -3,6 +3,7 @@
 
 #include "sys/types.h"
 #include "fcntl.h"
+#include "dirent.h"
 
 /**
  * Simple wrapper of the standard "open" function.
@@ -91,6 +92,30 @@ size_t xpread(int fd, void* restrict buf, size_t nbyte, off_t offset);
  */
 size_t xpwrite(int fd, void* restrict buf, size_t nbyte, off_t offset);
 
+/**
+ * Simple wrapper of the "opendir" function.
+ *
+ * Wrapper around the standard "opendir" function that ensures the directory is
+ * opened properly, otherwise the function will cause the code to exit with an
+ * error.
+ *
+ * @param path String containing the directory of the path to open.
+ * @returns Pointer to open directory.
+ */
+DIR* xopendir(const char* path);
+
+/**
+ * Simple wrapper of the "closedir" function.
+ *
+ * Wrapper around the standard "closedir" function that ensures the directory is
+ * closed properly, otherwise the function will cause the code to exit with an
+ * error.
+ *
+ * @param path Pointer to the directory structure.
+ * @returns Integer indicating if the close procedure was successful.
+ */
+int xclosedir(DIR* dir);
+
 /* Unit Tests */
 int test_xopen(void);
 int test_xclose(void);
@@ -98,5 +123,7 @@ int test_xwrite(void);
 int test_xread(void);
 int test_xpread(void);
 int test_xpwrite(void);
+int test_xopendir(void);
+int test_xclosedir(void);
 
 #endif // __FIO_H_

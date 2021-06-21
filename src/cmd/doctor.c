@@ -115,9 +115,19 @@ test_io_fio(void)
                 printf(RED "- xpread: failed" RESET "\n");
 
         if (test_xpwrite())
-                printf(GREEN "- xpread: passed" RESET "\n");
+                printf(GREEN "- xpwrite: passed" RESET "\n");
         else
-                printf(RED "- xpread: failed" RESET "\n");
+                printf(RED "- xpwrite: failed" RESET "\n");
+
+        if (test_xopendir())
+                printf(GREEN "- xopendir: passed" RESET "\n");
+        else
+                printf(RED "- xopendir: failed" RESET "\n");
+
+        if (test_xclosedir())
+                printf(GREEN "- xclosedir: passed" RESET "\n");
+        else
+                printf(RED "- xclosedir: failed" RESET "\n");
 }
 
 /**
