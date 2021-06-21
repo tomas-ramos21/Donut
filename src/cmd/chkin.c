@@ -77,7 +77,8 @@ chkin_file(const char* src, struct stat* f)
         str += 65;
         printf("Hash: %s\n", str);
 
-        /*  */
+        /* Get list of existing hashes */
+
 
         /* Get Sha-2 */
         /* f_sz = f->st_size; */
