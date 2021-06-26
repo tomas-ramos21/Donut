@@ -1,4 +1,4 @@
-#include "cmd/cmd.h"
+#include "cli/cmd.h"
 #include "mem/alloc.h"
 #include "mem/slab.h"
 #include "mem/mem_utils.h"

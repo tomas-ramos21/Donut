@@ -1,4 +1,4 @@
-#include "cmd/cmd.h"
+#include "cli/cmd.h"
 #include "stdio.h"
 #include "const/const.h"
 #include "misc/decorations.h"

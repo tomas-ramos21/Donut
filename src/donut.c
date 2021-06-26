@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "donut.h"
 #include "string.h"
-#include "cmd/cmd.h"
+#include "cli/cmd.h"
 #include "misc/decorations.h"
 #include "mem/slab.h"
 #include "inttypes.h"
