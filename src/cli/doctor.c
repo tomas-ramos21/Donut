@@ -6,6 +6,7 @@
 #include "string.h"
 #include "misc/colour.h"
 #include "crypto/sha2.h"
+#include "core/data-list.h"
 
 /**
  * @file doctor.c
@@ -168,6 +169,20 @@ test_memory_utilities(void)
                 printf(RED "- const_memcmp: failed" RESET "\n");
 }
 
+static void
+test_core_module(void)
+{
+        printf("\n[Core Module]\n");
+        if (test_data_list_init())
+                printf(GREEN "- init_data_list: passed" RESET "\n");
+        else
+                printf(RED "- init_data_list: failed" RESET "\n");
+        if (test_add_file_to_data_list())
+                printf(GREEN "- add_file_to_list: passed" RESET "\n");
+        else
+                printf(RED "- add_file_to_list: failed" RESET "\n");
+}
+
 /**
  * Display all unit tests results to the user.
  *
@@ -182,5 +197,6 @@ doctor(const int argc, const struct parsed_args* args)
         test_io_fio();
         test_crypto();
         test_memory_utilities();
+        test_core_module();
         return 0;
 }

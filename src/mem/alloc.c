@@ -147,6 +147,7 @@ xrealloc(void* buff, size_t sz)
         char* buff_cp = buff;
 
         while ((*ret_cp++ = *buff_cp++));
+        printf("Buffer: %p\n", buff);
         free(buff);
 
         return ret;
