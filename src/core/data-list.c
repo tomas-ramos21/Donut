@@ -39,25 +39,29 @@ test_data_list_init(void)
         return !ret;
 }
 
-inline static void
+static void
 grow_pages_allocation(struct data_list* restrict data)
 {
-        uint64_t* tmp = alloc_slab(data->slabs, (data->p_tot + GROWTH_FACTOR) * __SIZEOF_POINTER__);
+        uint32_t i = data->p_tot;
+        void** tmp = alloc_slab(data->slabs, (data->p_tot + GROWTH_FACTOR) * __SIZEOF_POINTER__);
         memcpy(tmp, data->pgs, data->p_tot * __SIZEOF_POINTER__);
 
-        /* Allocate new pages */
+        /* Adjust Bookkeeping Pointers */
         data->p_cur = tmp + data->p_tot;
+        printf("Pointer From Pages: %p\n", data->pgs);
         free_slab(data->slabs, data->pgs);
         data->pgs = (void**)tmp;
-        while (tmp) {
-                *tmp = (uintptr_t) alloc_slab(data->slabs, PAGE_SIZE);
-                tmp++;
-        }
 
         /* Update bookkeeping state  */
         data->p_tot += GROWTH_FACTOR;
         data->p_cnt += GROWTH_FACTOR;
-        data->pgs = (void**)tmp;
+
+        /* Allocate new pages */
+        tmp = data->p_cur;
+        for (; i < data->p_tot - 1; i++) {
+                *tmp++ = alloc_slab(data->slabs, PAGE_SIZE);
+                printf("tmp: %p\n", *(tmp - 1));
+        }
 }
 
 void

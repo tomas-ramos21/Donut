@@ -2,7 +2,6 @@
 #include "misc/decorations.h"
 #include "stdlib.h"
 #include "string.h"
-#include "inttypes.h"
 #include "errno.h"
 
 /**
@@ -29,25 +28,16 @@
 void*
 xmalloc(size_t sz)
 {
-        void* ret = malloc(sz + CACHE_LINE);
-        const int align = CACHE_LINE - 1;
+        void* ret = malloc(sz);
 
         if (!ret) {
                 printf(DONUT "Failed to allocate memory.\n");
                 exit(ENOMEM);
         }
 
-        uintptr_t bit_mask = ~(uintptr_t) align;
-        ret = (void*) (((uintptr_t) ret + align) & bit_mask);
-
         return ret;
 }
 
-/**
- * Collection of unit tests for xmalloc.
- * Runs tests to check if the function is capable of allocating aligned memory.
- * @returns In case of success the return value is 1 otheriwse its 0.
- */
 int
 test_xmalloc(int reps)
 {
@@ -58,7 +48,7 @@ test_xmalloc(int reps)
         for (i = 0; i < reps; i++) {
                 buff = xmalloc(PAGE_SIZE);
 
-                if (((uintptr_t) buff % CACHE_LINE) == 0)
+                if (buff)
                         res[i] = 1;
 
                 free(buff);
@@ -84,16 +74,12 @@ test_xmalloc(int reps)
 void*
 xcalloc(size_t n, size_t sz)
 {
-        void* ret = calloc(n, sz + CACHE_LINE);
-        const int align = CACHE_LINE - 1;
+        void* ret = calloc(n, sz);
 
         if (!ret) {
                 printf(DONUT "Failed to allocate memory.\n");
                 exit(ENOMEM);
         }
-
-        uintptr_t bit_mask = ~(uintptr_t) align;
-        ret = (void*) (((uintptr_t) ret + align) & bit_mask);
 
         return ret;
 }
@@ -113,7 +99,7 @@ test_xcalloc(int reps)
         for (i = 0; i < reps; i++) {
                 buff = xcalloc(1, PAGE_SIZE);
 
-                if (((uintptr_t) buff % CACHE_LINE) == 0)
+                if (buff)
                         res[i] = 1;
 
                 free(buff);
@@ -139,16 +125,15 @@ test_xcalloc(int reps)
 void*
 xrealloc(void* buff, size_t sz)
 {
+        printf("Buff: %p\n", buff);
         if (!buff)
                 return xmalloc(sz);
 
-        void* ret = xmalloc(sz);
-        char* ret_cp = ret;
-        char* buff_cp = buff;
-
-        while ((*ret_cp++ = *buff_cp++));
-        printf("Buffer: %p\n", buff);
-        free(buff);
+        void* ret = realloc(buff, sz);
+        if (!ret) {
+                printf(DONUT "Failed to allocate memory.\n");
+                exit(ENOMEM);
+        }
 
         return ret;
 }
@@ -167,7 +152,7 @@ test_xrealloc(int reps)
 
         for (i = 0; i < reps; i++) {
                 sum = 0;
-                char* dt = (char*) malloc(PAGE_SIZE);
+                char* dt = malloc(PAGE_SIZE);
                 memset(dt, 0x1, PAGE_SIZE);
                 buff = xrealloc(dt, PAGE_SIZE + 1);
 
@@ -175,7 +160,7 @@ test_xrealloc(int reps)
                 while (*buff_cp)
                         sum += *buff_cp++;
 
-                if (((uintptr_t) buff % CACHE_LINE) == 0 && sum == PAGE_SIZE)
+                if (buff && sum == PAGE_SIZE)
                         res[i] = 1;
 
                 free(buff);
