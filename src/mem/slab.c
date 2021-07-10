@@ -1,12 +1,15 @@
 #include "mem/slab.h"
 #include "mem/alloc.h"
 #include "inttypes.h"
+#include "string.h"
 
 /**
  * @file slab.c
  *
  * Implementation of slab allocator module.
  */
+
+#define SLAB_GROWTH 10
 
 /**
  * Structure that contains the slab allocator bookkeeping variables.
@@ -33,8 +36,10 @@ int
 test_init_slab(void)
 {
         struct slabs* p = init_slabs();
-        return (!p->slab_t && !p->slab_l && !p->slabs &&
-                !p->origs && !p->idx) ? 1: 0;
+        int ret = (!p->slab_t && !p->slab_l && !p->slabs &&
+                   !p->origs && !p->idx) ? 1: 0;
+        clear_slabs(p);
+        return ret;
 }
 
 /**
@@ -60,10 +65,12 @@ alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
         void*  ret = align_addr(mem);
 
         if (!ptr->slab_l) {
-                ptr->slab_t += 10;
-                ptr->slab_l += 10;
-                ptr->slabs = xrealloc(ptr->slabs, (ptr->slab_t) * sizeof(void*));
-                ptr->origs= xrealloc(ptr->origs, (ptr->slab_t) * sizeof(void*));
+                ptr->slab_t += SLAB_GROWTH;
+                ptr->slab_l += SLAB_GROWTH;
+                ptr->slabs = xrealloc(ptr->slabs, ptr->slab_t * __SIZEOF_POINTER__);
+                memset(&ptr->slabs[ptr->idx], 0x0, SLAB_GROWTH * __SIZEOF_POINTER__);
+                ptr->origs = xrealloc(ptr->origs, ptr->slab_t * __SIZEOF_POINTER__);
+                memset(&ptr->origs[ptr->idx], 0x0, SLAB_GROWTH * __SIZEOF_POINTER__);
         }
 
         /* Adjust slab bookkeeping state */
@@ -118,6 +125,8 @@ test_alloc_slab(void)
         for (int i = 0; i < 512; i++)
                      alloc_slab(ptr, PAGE_SIZE);
 
+        clear_slabs(ptr);
+
         return (sum == 2) ? 1 : 0;
 }
 
@@ -137,7 +146,7 @@ free_slab(struct slabs* restrict ptr, void* slab)
                 return;
 
         free(*orig);
-        ptr->slab_l += 1;
+        ptr->slab_l++;
         ptr->idx--;
 
         /* Shrink list of pointers [Aligned] */
@@ -163,6 +172,7 @@ int
 test_free_slab(void)
 {
         struct slabs* ptr = init_slabs();
+        int ret = 0;
         void* pg = alloc_slab(ptr, PAGE_SIZE);
         void* pg2 = alloc_slab(ptr, PAGE_SIZE);
         void* orig_cp = ptr->origs[1];
@@ -173,18 +183,19 @@ test_free_slab(void)
             ptr->slab_t == 10 &&
             ptr->slab_l == 9 &&
             ptr->origs[0] == orig_cp)
-                return 1;
+                ret = 1;
         else
-                return 0;
+                ret = 0;
+
+        clear_slabs(ptr);
+        return ret;
 }
 
 void
 clear_slabs(struct slabs* restrict ptr)
 {
         void** slabs = ptr->origs;
-        while (*slabs) {
-                free(*slabs);
-                slabs++;
-        }
+        for (uint64_t i = 0; i != ptr->idx; i++)
+                free(slabs[i]);
         free(ptr);
 }
