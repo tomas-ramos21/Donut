@@ -5,7 +5,6 @@
 
 /**
  * @file slab.c
- *
  * Implementation of slab allocator module.
  */
 
@@ -18,8 +17,8 @@ struct slabs {
         uint32_t slab_t;  /**< Total amount of slabs                 */
         uint32_t slab_l;  /**< Amount of slabs left in the allocator */
         uint64_t idx;     /**< Index of the next slab                */
-        void** slabs;     /**< Complete list of slabs                */
-        void** origs;     /**< Current free slab                     */
+        void** slabs;     /**< List of aligned slabs                 */
+        void** origs;     /**< List of original unaligned slabs      */
 };
 
 struct slabs*
@@ -68,8 +67,10 @@ alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
                 ptr->slab_t += SLAB_GROWTH;
                 ptr->slab_l += SLAB_GROWTH;
                 ptr->slabs = xrealloc(ptr->slabs, ptr->slab_t * __SIZEOF_POINTER__);
-                memset(&ptr->slabs[ptr->idx], 0x0, SLAB_GROWTH * __SIZEOF_POINTER__);
                 ptr->origs = xrealloc(ptr->origs, ptr->slab_t * __SIZEOF_POINTER__);
+
+                /* Zero new indices */
+                memset(&ptr->slabs[ptr->idx], 0x0, SLAB_GROWTH * __SIZEOF_POINTER__);
                 memset(&ptr->origs[ptr->idx], 0x0, SLAB_GROWTH * __SIZEOF_POINTER__);
         }
 

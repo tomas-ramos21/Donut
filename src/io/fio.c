@@ -212,7 +212,7 @@ int
 test_xread()
 {
         int ret;
-        size_t bytes = 21;
+        size_t bytes = 20;
         struct stat file;
         char* str = "Do you like donuts?\n";
         char* buf = malloc(bytes);
@@ -295,7 +295,7 @@ int
 test_xpread()
 {
         int ret;
-        size_t bytes = 21;
+        size_t bytes = 20;
         struct stat file;
         char* str = "Do you like donuts?\n";
         char* buf = malloc(bytes);
