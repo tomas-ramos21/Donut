@@ -125,7 +125,6 @@ test_xcalloc(int reps)
 void*
 xrealloc(void* buff, size_t sz)
 {
-        printf("Buff: %p\n", buff);
         if (!buff)
                 return xmalloc(sz);
 

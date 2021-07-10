@@ -4,6 +4,15 @@
 #include "stdlib.h"
 
 /**
+ * @file slab.h
+ *
+ * In order to facilitate manual memory management this slab allocator was
+ * created. It allows the "owner" of the allocator to request and realease
+ * memory slabs as needed, with the guarantuee of no memory leaks. Moreover
+ * it will align memory to the cache-line's size to prevent false sharing.
+ */
+
+/**
  * Initialize a slab allocator.
  * @returns Pointer to the slab allocator.
  */
@@ -30,7 +39,7 @@ void* alloc_slab(struct slabs* ptr, size_t sz);
  * given slab structure. If that's the case the following happens:
  *   1. The memory slab is freed
  *   2. The slab list is updated to support 1 more slab
- *   3. The slab list is re-order to that no gaps exist
+ *   3. The slab list is re-order so that no gaps exist
  *
  * @param ptr Pointer to a slab allocator structure
  * @param slab Pointer to the slab to deallocate

@@ -6,11 +6,6 @@
  * @file slab.c
  *
  * Implementation of slab allocator module.
- *
- * In order to facilitate manual memory management this slab allocator was
- * created. It allows the "owner" of the allocator to request and realease
- * memory slabs as needed, with the guarantuee of no memory leaks. Moreover
- * it will align memory to the cache-line's size to prevent false sharing.
  */
 
 /**
@@ -19,6 +14,7 @@
 struct slabs {
         uint32_t slab_t;  /**< Total amount of slabs                 */
         uint32_t slab_l;  /**< Amount of slabs left in the allocator */
+        uint64_t idx;     /**< Index of the next slab                */
         void** slabs;     /**< Complete list of slabs                */
         void** origs;     /**< Current free slab                     */
 };
@@ -37,11 +33,18 @@ int
 test_init_slab(void)
 {
         struct slabs* p = init_slabs();
-        return (!p->slab_t && !p->slab_l && !p->slabs && !p->origs) ? 1: 0;
+        return (!p->slab_t && !p->slab_l && !p->slabs &&
+                !p->origs && !p->idx) ? 1: 0;
 }
 
+/**
+ * Align a memory address to the cache line's size.
+ *
+ * @param ptr Pointer to the memory address to be aligned
+ * @returns Pointer to an aligned memory address
+ */
 inline static void*
-align_ptr(void* ptr)
+align_addr(void* ptr)
 {
         const int align = CACHE_LINE - 1;
         uintptr_t bit_mask = ~(uintptr_t)align;
@@ -52,10 +55,9 @@ align_ptr(void* ptr)
 void*
 alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
 {
-        uint32_t idx;
         size_t sz  = (slab_sz < PAGE_SIZE) ? PAGE_SIZE : slab_sz;
         void*  mem = xcalloc(1, sz + CACHE_LINE);
-        void*  ret = align_ptr(mem);
+        void*  ret = align_addr(mem);
 
         if (!ptr->slab_l) {
                 ptr->slab_t += 10;
@@ -65,9 +67,9 @@ alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
         }
 
         /* Adjust slab bookkeeping state */
-        idx = ptr->slab_t - ptr->slab_l;
-        ptr->origs[idx] = mem;
-        ptr->slabs[idx] = ret;
+        ptr->origs[ptr->idx] = mem;
+        ptr->slabs[ptr->idx] = ret;
+        ptr->idx++;
         ptr->slab_l--;
         return ret;
 }
@@ -96,27 +98,21 @@ test_alloc_slab(void)
             ptr->slabs &&
             pg &&
             !((uintptr_t)pg % CACHE_LINE) &&
-            *ptr->slabs == pg &&
-            ptr->curr &&
-            ptr->curr == (ptr->slabs + 1) &&
-            ptr->orig_ptr &&
-            ptr->orig_ptr[0] &&
-            ptr->orig_curr == (ptr->orig_ptr + 1))
+            ptr->slabs[0] == pg &&
+            ptr->origs &&
+            ptr->origs[0])
                 sum += 1;
 
         /* Test second allocation, but above page size */
         pg = alloc_slab(ptr, PAGE_SIZE << 1);
         if (ptr->slab_l == 8 &&
             ptr->slab_t == 10 &&
-            (ptr->slabs + 1) &&
+            &ptr->slabs[1] &&
             pg &&
             !((uintptr_t)pg % CACHE_LINE) &&
-            *(ptr->slabs + 1) == pg &&
-            ptr->curr &&
-            ptr->curr == (ptr->slabs + 2) &&
-            ptr->orig_ptr &&
-            ptr->orig_ptr[1] &&
-            ptr->orig_curr == (ptr->orig_ptr + 2))
+            ptr->slabs[1] == pg &&
+            &ptr->origs[1] &&
+            ptr->origs[1])
                 sum += 1;
 
         for (int i = 0; i < 512; i++)
@@ -142,6 +138,7 @@ free_slab(struct slabs* restrict ptr, void* slab)
 
         free(*orig);
         ptr->slab_l += 1;
+        ptr->idx--;
 
         /* Shrink list of pointers [Aligned] */
         void** nxt = ++slabs;
@@ -168,18 +165,14 @@ test_free_slab(void)
         struct slabs* ptr = init_slabs();
         void* pg = alloc_slab(ptr, PAGE_SIZE);
         void* pg2 = alloc_slab(ptr, PAGE_SIZE);
-        void* curr = ptr->curr - 1;
-        void* orig_cp = *(ptr->orig_ptr + 1);
-        void* orig_curr_cp = ptr->orig_curr - 1;
+        void* orig_cp = ptr->origs[1];
 
         free_slab(ptr, pg);
-        if (*ptr->slabs == pg2 &&
-            *(ptr->slabs + 1) == 0x0 &&
+        if (ptr->slabs[0] == pg2 &&
+            ptr->slabs[1] == 0x0 &&
             ptr->slab_t == 10 &&
             ptr->slab_l == 9 &&
-            ptr->curr == curr &&
-            ptr->orig_ptr[0] == orig_cp &&
-            ptr->orig_curr == orig_curr_cp)
+            ptr->origs[0] == orig_cp)
                 return 1;
         else
                 return 0;
@@ -188,7 +181,7 @@ test_free_slab(void)
 void
 clear_slabs(struct slabs* restrict ptr)
 {
-        void** slabs = ptr->orig_ptr;
+        void** slabs = ptr->origs;
         while (*slabs) {
                 free(*slabs);
                 slabs++;
