@@ -4,6 +4,11 @@
 #include "stdio.h"
 
 /**
+ * @file mem_utils.c
+ * Functions used to act or manipulate memory.
+ */
+
+/**
  * Constant comparison of memory buffers.
  *
  * Compares the content of 2 memory buffers in constant time to prevent timing
@@ -16,7 +21,11 @@
  */
 int const_memcmp(void* s1, void* s2, size_t n);
 
-/* Unit tests */
+/**
+ * Collection of unit tests for const_memcmp.
+ * Runs tests to check if the function is comparing 2 memory buffers correctly.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_const_memcmp(void);
 
 #endif // MEM_UTILS_H_

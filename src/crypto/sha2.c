@@ -4,13 +4,7 @@
 
 /**
  * @file sha2.c
- *
  * Self-contained implementation of SHA-2.
- *
- * Using an existing implementation of SHA-2 is boring and could lead to
- * licensing problems. Therefore, it was opted to create a self-contained
- * version for Donut. That way Donut isn't tied to a a third party for future
- * optimisations or customised behaviour.
  */
 
 /*
@@ -68,12 +62,6 @@
 #define S3(x) (ROR((x),(17)) ^ ROR((x),(19)) ^ LRS((x),(10)))
 
 /**
- * @def BLK_SZ
- * SHA-2 block size in bytes.
- */
-#define BLK_SZ 64
-
-/**
  * Buffer structure used to proccess SHA-2.
  */
 struct hash_state {
@@ -103,11 +91,6 @@ static const uint32_t k[64] = {
         0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
 };
 
-/**
- * Initialize the hash state structure.
- *
- * @param buf Buffer in which the structure will be stored
- */
 void
 sha2_init(void* buf)
 {
@@ -214,12 +197,6 @@ sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
         xform(hash);
 }
 
-/**
- * This function processes 64 bytes of data and ypdates the hash state.
- *
- * @param in Input buffer containing the data to be processed
- * @param buf Buffer containg the current hash state
- */
 void
 sha2_update(void* in, void* out, void* buf, size_t bytes)
 {
@@ -251,18 +228,6 @@ sha2_update(void* in, void* out, void* buf, size_t bytes)
         }
 }
 
-/**
- * Computes the SHA-2 hash of a given buffer.
- *
- * Computes the SHA-2 hash of a byte sequence. The hash state is initialized, then
- * the data is changed to big-endian format and hashed. At the end the data is
- * transformed back to little-endian format and return in the respective buffer.
- *
- * @param in Buffer whose content will be hash
- * @param out Buffer where the result of the hashing process will be provided
- * @param buf Buffer where the hash state will be stored during the procedure
- * @param len Byte length of the input buffer
- */
 void
 sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, size_t len)
 {
@@ -300,14 +265,6 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
         }
 }
 
-/**
- * Convert a hash into a string.
- *
- * Converts a hash into a string with it's hex representation.
- *
- * @param hash Pointer to hash buffer
- * @param buf Buffer where the string value of the hash will be placed
- */
 void
 sha2_to_str(uint8_t* hash, char* buf)
 {
@@ -339,13 +296,6 @@ test_sha2_init(void)
         return !ret;
 }
 
-/**
- * SHA-2 module's unit test.
- *
- * The code is tested over several vectors, by providing the input and expected
- * output string representation of the hash. All examples were sourced from:
- * https://www.di-mgt.com.au/sha_testvectors.html
- */
 int
 test_sha2(void)
 {

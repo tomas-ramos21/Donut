@@ -6,25 +6,15 @@
 
 /**
  * @file alloc.c
- *
- * Simple wrappers around the standard memory allocation functions.
- *
- * Using the standard allocation functions is boring, leads to fragmentation
- * and doesn't allow to align the memory to the machine's cache line.
- * Therefore, this file implements wrappers around these functions to provide
- * some customised behaviour.
+ * Implementation of safety wrappers over the C's memory allocation functions.
  */
 
 /**
- * Wrapper of the standard "malloc" function.
- *
- * Wrapper around the standard "malloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly terminated
- *
- * @param sz Byte size of the memory to be allocated
- * @returns Pointer to the allocated buffer
+ * @def REPETITIONS
+ * Number times allocation are repeated in the unit tests.
  */
+#define REPETITIONS 10
+
 void*
 xmalloc(size_t sz)
 {
@@ -39,13 +29,13 @@ xmalloc(size_t sz)
 }
 
 int
-test_xmalloc(int reps)
+test_xmalloc(void)
 {
         void* buff;
         int i, sum = 0;
-        int res[reps];
+        int res[REPETITIONS];
 
-        for (i = 0; i < reps; i++) {
+        for (i = 0; i < REPETITIONS; i++) {
                 buff = xmalloc(PAGE_SIZE);
 
                 if (buff)
@@ -54,23 +44,12 @@ test_xmalloc(int reps)
                 free(buff);
         }
 
-        for (i = 0; i < reps; i++)
+        for (i = 0; i < REPETITIONS; i++)
                 sum += res[i];
 
-        return (reps == sum) ? 1 : 0;
+        return (REPETITIONS == sum) ? 1 : 0;
 }
 
-/**
- * Wrapper of the standard "calloc" function.
- *
- * Wrapper around the standard "calloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly terminated
- *
- * @param n Number of memory blocks to be allocated
- * @param sz Byte size of each memory block to be allocated
- * @returns Pointer to the allocated buffer
- */
 void*
 xcalloc(size_t n, size_t sz)
 {
@@ -84,19 +63,14 @@ xcalloc(size_t n, size_t sz)
         return ret;
 }
 
-/**
- * Collection of unit tests for xcalloc.
- * Runs tests to check if the function is capable of allocating aligned memory.
- * @returns In case of success the return value is 1 otheriwse its 0.
- */
 int
-test_xcalloc(int reps)
+test_xcalloc(void)
 {
         void* buff;
         int i, sum = 0;
-        int res[reps];
+        int res[REPETITIONS];
 
-        for (i = 0; i < reps; i++) {
+        for (i = 0; i < REPETITIONS; i++) {
                 buff = xcalloc(1, PAGE_SIZE);
 
                 if (buff)
@@ -105,23 +79,12 @@ test_xcalloc(int reps)
                 free(buff);
         }
 
-        for (i = 0; i < reps; i++)
+        for (i = 0; i < REPETITIONS; i++)
                 sum += res[i];
 
-        return (reps == sum) ? 1 : 0;
+        return (REPETITIONS == sum) ? 1 : 0;
 }
 
-/**
- * Wrapper of the standard "realloc" function.
- *
- * Wrapper around the standard "realloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly terminated
- *
- * @param buff Buffer whose memory content needs to be expanded
- * @param sz Byte size of the buffer to be allocated
- * @returns Pointer to the allocated buffer
- */
 void*
 xrealloc(void* buff, size_t sz)
 {
@@ -137,19 +100,14 @@ xrealloc(void* buff, size_t sz)
         return ret;
 }
 
-/**
- * Collection of unit tests for xrealloc.
- * Runs tests to check if the function is capable of allocating aligned memory.
- * @returns In case of success the return value is 1 otheriwse its 0.
- */
 int
-test_xrealloc(int reps)
+test_xrealloc(void)
 {
         void* buff;
         int i, sum;
-        int res[reps];
+        int res[REPETITIONS];
 
-        for (i = 0; i < reps; i++) {
+        for (i = 0; i < REPETITIONS; i++) {
                 sum = 0;
                 char* dt = malloc(PAGE_SIZE);
                 memset(dt, 0x1, PAGE_SIZE);
@@ -166,8 +124,8 @@ test_xrealloc(int reps)
         }
 
         sum = 0;
-        for (i = 0; i < reps; i++)
+        for (i = 0; i < REPETITIONS; i++)
                 sum += res[i];
 
-        return (reps == sum) ? 1 : 0;
+        return (REPETITIONS == sum) ? 1 : 0;
 }

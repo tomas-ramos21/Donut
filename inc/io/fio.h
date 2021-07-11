@@ -6,6 +6,15 @@
 #include "dirent.h"
 
 /**
+ * @file fio.h
+ *
+ * Implementation of wrappers around the standard file I/O functions.
+ *
+ * Provides a collection of "safer" file I/O functions which provide safeguard
+ * towards common issues while using them.
+ */
+
+/**
  * Simple wrapper of the standard "open" function.
  *
  * Wrapper around the standard open function which check for the following
@@ -117,13 +126,61 @@ DIR* xopendir(const char* path);
 int xclosedir(DIR* dir);
 
 /* Unit Tests */
+
+/**
+ * Unit test for xopen.
+ * Runs tests to check if the function is capable of opening a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xopen(void);
+
+/**
+ * Unit tests for xclose.
+ * Runs tests to check if the function is capable of closing a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xclose(void);
+
+/**
+ * Unit tests for xwrite.
+ * Runs tests to check if the function is capable of writting to a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xwrite(void);
+
+/**
+ * Unit tests for xread.
+ * Runs tests to check if the function is capable of reading from a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xread(void);
+
+/**
+ * Unit tests for xpread.
+ * Runs tests to check if the function is capable of reading from a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xpread(void);
+
+/**
+ * Unit tests for xpwrite.
+ * Runs tests to check if the function is capable of writting to a file.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xpwrite(void);
+
+/**
+ * Unit test for xopendir.
+ * Check if the function is capable of opening the "Home" directory.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xopendir(void);
+
+/**
+ * Unit test for xclosedir.
+ * Check if the function is capable of opening then closing the "Home" directory.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
 int test_xclosedir(void);
 
 #endif // __FIO_H_

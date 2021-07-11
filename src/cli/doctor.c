@@ -20,12 +20,6 @@
  */
 
 /**
- * @def NUM_ALLOC_TESTS
- * Number of repetetions for the memory allocation tests.
- */
-#define NUM_ALLOC_TESTS 10
-
-/**
  * Execute all memory allocation module's unit tests.
  *
  * Executes all unit tests for the memory allocation module and prints onto the
@@ -36,19 +30,19 @@ test_mem_alloc(void)
 {
         /*  Malloc Test */
         printf("\n[Allocation Module]\n");
-        if (test_xmalloc(NUM_ALLOC_TESTS))
+        if (test_xmalloc())
                 printf(GREEN "- xmalloc: passed" RESET "\n");
         else
                 printf(RED "- xmalloc: failed" RESET "\n");
 
         /* Calloc Test */
-        if (test_xcalloc(NUM_ALLOC_TESTS))
+        if (test_xcalloc())
                 printf(GREEN "- xcalloc: passed" RESET "\n");
         else
                 printf(RED "- xcalloc: failed" RESET "\n");
 
         /* Realloc Test */
-        if (test_xrealloc(NUM_ALLOC_TESTS))
+        if (test_xrealloc())
                 printf(GREEN "- xrealloc: passed" RESET "\n");
         else
                 printf(RED "- xrealloc: failed" RESET "\n");

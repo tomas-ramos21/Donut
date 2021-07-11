@@ -8,6 +8,10 @@
  * Implementation of slab allocator module.
  */
 
+/**
+ * @def SLAB_GROWTH
+ * Number of new slabs slots added at each expansion.
+ */
 #define SLAB_GROWTH 10
 
 /**
@@ -27,10 +31,6 @@ init_slabs(void)
         return xcalloc(1, sizeof(struct slabs));
 }
 
-/**
- * Unit test for "init_slabs" function.
- * @returns In case of success the return value is 1 otherwise its 0.
- */
 int
 test_init_slab(void)
 {
@@ -82,15 +82,6 @@ alloc_slab(struct slabs* restrict ptr, size_t slab_sz)
         return ret;
 }
 
-/**
- * Unit test for "alloc_slab" function.
- *
- * The following tests are performed:
- *   1. Slab allocation under the machine's page size
- *   2. Slab allocation above the machine's page size
- *
- * @returns In case of success the return value is 1 otherwise its 0.
- */
 int
 test_alloc_slab(void)
 {
@@ -161,14 +152,6 @@ free_slab(struct slabs* restrict ptr, void* slab)
         while((*orig++ = *nxt++));
 }
 
-/**
- * Unit test for "free_slab" function.
- *
- * Runs tests to check if the function is capable of freeing a memory slab
- * and then update the respective variables within the allocator structure.
- *
- * @returns In case of success the return value is 1 otherwise its 0.
- */
 int
 test_free_slab(void)
 {

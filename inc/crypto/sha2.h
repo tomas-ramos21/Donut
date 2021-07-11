@@ -5,6 +5,17 @@
 #include "stdint.h"
 
 /**
+ * @file sha2.h
+ *
+ * Self-contained implementation of SHA-2.
+ *
+ * Using an existing implementation of SHA-2 is boring and could lead to
+ * licensing problems. Therefore, it was opted to create a self-contained
+ * version for Donut. That way Donut isn't tied to a a third party for future
+ * optimisations or customised behaviour.
+ */
+
+/**
  * @def SHA2_BLK_SZ
  * SHA-2 block size in bytes.
  */
@@ -57,7 +68,7 @@ void sha2_init(void* buf);
 void sha2_update(void* in, void* out, void* buf, size_t bytes);
 
 /**
- * SHA-2 module's small files unit test.
+ * Test correctness of the hashing process, by running it on testing vectors.
  *
  * The code is tested over several vectors, by providing the input and expected
  * output string representation of the hash. All examples were sourced from:
@@ -66,12 +77,8 @@ void sha2_update(void* in, void* out, void* buf, size_t bytes);
 int test_sha2(void);
 
 /**
- * SHA-2 module's tests the initialization of the hash state.
- *
- * The code tests the initialization of the hash state, this function is meant
- * to be used in cases when the file is too large to be processed with the
- * standard "sha2_hash" function. Therefore, requiring the hash state structure
- * to be maintained by the user.
+ * Test the initialization of the hash state.
+ * Ensure the initial hash structure is initialized with the correct values.
  * @see "sha2_hash"
  */
 int test_sha2_init(void);

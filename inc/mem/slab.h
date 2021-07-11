@@ -57,9 +57,37 @@ void free_slab(struct slabs* ptr, void* slab);
  */
 void clear_slabs(struct slabs* ptr);
 
-/* Unit tests */
+/**
+ * Unit test for "init_slabs" function.
+ *
+ * Tests that after the slab allocator initialization all fields are set to 0.
+ *
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_init_slab(void);
+
+/**
+ * Unit test for "alloc_slab" function.
+ *
+ * Performs several tests to ensure that:
+ *   1. Slab allocation under the machine's page size is performed successfully
+ *   2. Slab allocation above the machine's page size is performed successfully
+ *   3. The slabs allocated are aligned to the machine's cache line size
+ *   4. The bookkeeping variables are properly updated as allocations occur
+ *
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_alloc_slab(void);
+
+/**
+ * Unit test for "free_slab" function.
+ *
+ * Performs several tests to ensure that:
+ *   1. The allocator is capable of freeing memory slabs
+ *   2. The bookkeeping variables are properly updated as deallocations occur
+ *
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_free_slab(void);
 
 #endif // __SLAB_H_
