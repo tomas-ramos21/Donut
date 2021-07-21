@@ -49,4 +49,10 @@
  */
 #define TEST_FILE "donut_test.txt"
 
+/**
+ * @def DATA_FILE_NAME_SIZE
+ * Number of characters used in data files including the null character.
+ */
+#define DATA_FILE_NAME_SIZE 32
+
 #endif // __CONST_H_

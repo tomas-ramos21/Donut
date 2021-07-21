@@ -1,18 +1,16 @@
 #include "core/data-list.h"
+#include "const/const.h"
 #include "stdio.h"
 #include "string.h"
 
 #define GROWTH_FACTOR PAGE_SIZE / __SIZEOF_POINTER__
-#define HASH_SIZE 32
+#define ELEMENTS_PER_PAGE DATA_FILE_NAME_SIZE / PAGE_SIZE
 
 struct data_list {
-        uint32_t e_cnt;      /**< Elements left in the current allocation */
-        uint32_t p_cnt;      /**< Pages in the current allocation */
-        uint32_t p_tot;      /**< Total pages allocated */
-        struct slabs* slabs; /**< Slab Allocator */
-        char* e_cur;         /**< Next Free Element */
-        void** p_cur;        /**< Next Free Page */
+        uint32_t elem_l;      /**< Elements lefts */
+        uint32_t elem_t;      /**< Maximum array capacity */
         void** pgs;          /**< Allocated Pages */
+        struct slabs* slabs; /**< Slab Allocator */
 };
 
 struct data_list*
@@ -29,22 +27,19 @@ test_data_list_init(void)
         int ret = 0;
         struct slabs* slabs = init_slabs();
         struct data_list* buf = init_data_list(slabs);
-        ret |= buf->e_cnt;
-        ret |= buf->p_cnt;
-        ret |= buf->p_tot;
+        ret |= buf->e_idx;
+        ret |= buf->e_tot;
         ret |= *((uint8_t*)*(buf->pgs));
         ret |= !((uintptr_t)buf->slabs);
-        ret |= ((uintptr_t)buf->e_cur);
-        ret |= ((uintptr_t)buf->p_cur);
         return !ret;
 }
 
-static void
+inline static void
 grow_pages_allocation(struct data_list* restrict data)
 {
-        uint32_t i = data->p_tot;
-        void** tmp = alloc_slab(data->slabs, (data->p_tot + GROWTH_FACTOR) * __SIZEOF_POINTER__);
-        memcpy(tmp, data->pgs, data->p_tot * __SIZEOF_POINTER__);
+        uint32_t pgs_t = PAGE_SIZE / (data->elem_t * DATA_FILE_NAME_SIZE);
+        void** tmp = alloc_slab(data->slabs, (pgs_t + GROWTH_FACTOR) * __SIZEOF_POINTER__);
+        memcpy(tmp, data->pgs, pgs_t * __SIZEOF_POINTER__);
 
         /* Adjust Bookkeeping Pointers */
         data->p_cur = &tmp[data->p_tot];
@@ -62,16 +57,8 @@ grow_pages_allocation(struct data_list* restrict data)
 void
 add_file_to_list(struct data_list* restrict data, char* f_name)
 {
-        if (!data->e_cnt) {
-
-                if (!data->p_cnt)
-                        grow_pages_allocation(data);
-
-                data->e_cur = *(data->p_cur);
-                data->e_cnt = PAGE_SIZE / HASH_SIZE;
-                data->p_cur++;
-                data->p_cnt--;
-        }
+        if (!data->elem_l)
+                grow_pages_allocation(data);
 
         memcpy(data->e_cur, f_name, 31);
         data->e_cur += 32;
