@@ -62,11 +62,8 @@ add_file_to_list(struct data_list* restrict data, char* f_name)
 
         /* Get page & element index relative to the page */
         uint64_t idx = data->elem_t - data->elem_l;
-        printf("Index: %llu\n", idx);
         uint64_t p_idx = (idx / ELEM_PER_PG) + (idx % ELEM_PER_PG) ? 1 : 0;
-        printf("Page Index: %llu\n", p_idx);
         uint64_t e_idx = (idx  / p_idx) + (idx % p_idx) ? 1 : 0;
-        printf("Element Index: %llu\n", e_idx);
         char* elem = ((char*)(data->pgs[p_idx])) + (e_idx * DATA_FILE_NAME_SIZE);
 
         strncpy(elem, f_name, 31);
@@ -84,22 +81,20 @@ test_add_file_to_data_list(void)
         /* Add first item to the list */
         add_file_to_list(buf, test);
         ret |= (buf->elem_t == (GROWTH_FACTOR * ELEM_PER_PG)) ? 1 : 0;
-        ret |= (buf->elem_l == ((GROWTH_FACTOR * ELEM_PER_PG)) - 1) ? 1 : 0;
+        ret &= (buf->elem_l == ((GROWTH_FACTOR * ELEM_PER_PG)) - 1) ? 1 : 0;
 
-        /* Check if the first item content is correct */
+        /* Check first item content is correct and starts at the right index */
         char* data = buf->pgs[0];
-        printf("Pointer: %p\n", data);
-        printf("First Element: %s\n", data);
+        ret &= !strncmp(data, test, 31);
 
         /* Add second item to the list */
         add_file_to_list(buf, test);
-        ret |= (buf->elem_t == (GROWTH_FACTOR * ELEM_PER_PG)) ? 1 : 0;
-        ret |= (buf->elem_l == ((GROWTH_FACTOR * ELEM_PER_PG)) - 2) ? 1 : 0;
+        ret &= (buf->elem_t == (GROWTH_FACTOR * ELEM_PER_PG)) ? 1 : 0;
+        ret &= (buf->elem_l == ((GROWTH_FACTOR * ELEM_PER_PG)) - 2) ? 1 : 0;
 
-        /* Check if the second item content is correct */
+        /* Check second item content is correct and starts at the right index */
         data = ((char*)buf->pgs[0]) + 1 * 32;
-        printf("Pointer: %p\n", data);
-        printf("First Element: %s\n", data);
+        ret &= !strncmp(data, test, 31);
 
         return ret;
 }
