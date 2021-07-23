@@ -1,5 +1,6 @@
 #include "core/data-list.h"
 #include "const/const.h"
+#include "misc/decorations.h"
 #include "stdio.h"
 #include "string.h"
 
@@ -38,6 +39,21 @@ test_data_list_init(void)
         return ret;
 }
 
+char*
+get_data_list_index(struct data_list* restrict data, uint32_t idx)
+{
+        char* ret;
+        uint32_t index = idx + 1;
+        uint32_t p_idx = (index / ELEM_PER_PG) + (index % ELEM_PER_PG) ? 0 : 1;
+        uint32_t e_idx = idx - ((p_idx - 1) * ELEM_PER_PG);
+
+        if (p_idx >= data->pg_cnt || e_idx >= ELEM_PER_PG)
+                return 0x0;
+
+        ret = ((char*)(data->pgs[--p_idx])) + (e_idx * DATA_FILE_NAME_SIZE);
+        return ret;
+}
+
 inline static void
 grow_allocation(struct data_list* restrict data)
 {
@@ -64,9 +80,7 @@ add_file_to_list(struct data_list* restrict data, char* f_name)
                 grow_allocation(data);
 
         /* Get relative page & element index */
-        uint64_t p_idx = (data->idx / ELEM_PER_PG) + (data->idx % ELEM_PER_PG) ? 1 : 0;
-        uint64_t e_idx = (data->idx  / p_idx) + (data->idx % p_idx) ? 1 : 0;
-        char* elem = ((char*)(data->pgs[p_idx])) + (e_idx * DATA_FILE_NAME_SIZE);
+        char* elem = get_data_list_index(data, data->idx);
 
         data->idx++;
         data->elem_l--;
@@ -102,6 +116,12 @@ test_add_file_to_data_list(void)
         /* Check second item content is correct and starts at the right index */
         data = ((char*)buf->pgs[0]) + 1 * 32;
         ret &= !strncmp(data, test, 31);
+
+        add_file_to_list(buf, test);
+        add_file_to_list(buf, test);
+        add_file_to_list(buf, test);
+        add_file_to_list(buf, test);
+        add_file_to_list(buf, test);
 
         return ret;
 }
