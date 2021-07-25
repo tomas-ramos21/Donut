@@ -9,6 +9,7 @@ void add_file_to_list(struct data_list* restrict data, char* f_name);
 
 /* Unit Tests */
 int test_data_list_init(void);
+int test_get_data_list_index(void);
 int test_add_file_to_data_list(void);
 
 #endif // HASH_LIST_H_

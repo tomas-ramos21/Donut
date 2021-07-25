@@ -171,6 +171,10 @@ test_core_module(void)
                 printf(GREEN "- init_data_list: passed" RESET "\n");
         else
                 printf(RED "- init_data_list: failed" RESET "\n");
+        if (test_get_data_list_index())
+                printf(GREEN "- get_data_list_index: passed" RESET "\n");
+        else
+                printf(RED "- get_data_list_index: failed" RESET "\n");
         if (test_add_file_to_data_list())
                 printf(GREEN "- add_file_to_list: passed" RESET "\n");
         else
