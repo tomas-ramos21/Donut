@@ -145,6 +145,16 @@ test_crypto(void)
                 printf(GREEN "- sha2_init: passed" RESET "\n");
         else
                 printf(RED "- sha2_init: failed" RESET "\n");
+
+        if (test_sha2_to_str())
+                printf(GREEN "- sha2_to_str: passed" RESET "\n");
+        else
+                printf(RED "- sha2_to_str: failed" RESET "\n");
+
+        if (test_sha2_to_strn())
+                printf(GREEN "- sha2_to_strn: passed" RESET "\n");
+        else
+                printf(RED "- sha2_to_strn: failed" RESET "\n");
 }
 
 /**

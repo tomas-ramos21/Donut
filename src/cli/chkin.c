@@ -74,9 +74,10 @@ chkin_file(const char* src, struct stat* f)
         sha2_to_str(str, (char*)(str + SHA_BLK_SZ));
         str += SHA_BLK_SZ;
         printf("Hash: %s\n", str);
+        memset(str + 31, 0x0, 33);
+        printf("Truncated Hash: %s\n", str);
 
         /* Get list of existing hashes */
-
 
         /* Get Sha-2 */
         /* f_sz = f->st_size; */

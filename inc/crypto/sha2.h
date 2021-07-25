@@ -51,6 +51,17 @@ void sha2_hash(uintptr_t* restrict in, uint8_t* out, void* restrict buf, size_t 
  */
 void sha2_to_str(uint8_t* hash, char* buf);
 
+/**
+ * Convert the first nbytes of the hash into a string.
+ *
+ * Converts the first nbytes of a hash into a string with it's hex
+ * representation.
+ *
+ * @param hash Pointer to hash buffer
+ * @param buf Buffer where the string value of the hash will be placed
+ * @param bytes Number of bytes to convert into a string
+ */
+void sha2_to_strn(uint8_t* hash, char* buf, uint8_t bytes);
 
 /**
  * Initialize the hash state structure.
@@ -82,5 +93,17 @@ int test_sha2(void);
  * @see "sha2_hash"
  */
 int test_sha2_init(void);
+
+/**
+ * Test the conversion of the SHA-2 hash into a hex string.
+ * Ensures the SHA-2 hash is converted into the correct strings.
+ */
+int test_sha2_to_str(void);
+
+/**
+ * Test the conversion of the first bytes of SHA-2 hash into a hex string.
+ * Ensures the first SHA-2 hash bytes are converted into the correct strings.
+ */
+int test_sha2_to_strn(void);
 
 #endif // SHA2_H_

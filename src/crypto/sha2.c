@@ -106,6 +106,26 @@ sha2_init(void* buf)
         hash->hx[7] = 0x5be0cd19;
 }
 
+int
+test_sha2_init(void)
+{
+        int ret = 0;
+        struct hash_state* hash = malloc(sizeof(struct hash_state));
+
+        sha2_init(hash);
+        ret = !(hash->len == 0);
+        ret |= !(hash->hx[0] == 0x6a09e667);
+        ret |= !(hash->hx[1] == 0xbb67ae85);
+        ret |= !(hash->hx[2] == 0x3c6ef372);
+        ret |= !(hash->hx[3] == 0xa54ff53a);
+        ret |= !(hash->hx[4] == 0x510e527f);
+        ret |= !(hash->hx[5] == 0x9b05688c);
+        ret |= !(hash->hx[6] == 0x1f83d9ab);
+        ret |= !(hash->hx[7] == 0x5be0cd19);
+
+        return !ret;
+}
+
 /**
  * SHA-2 data transform process.
  *
@@ -265,37 +285,6 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
         }
 }
 
-void
-sha2_to_str(uint8_t* hash, char* buf)
-{
-        int ret, off = 0;
-        while (off < SHA_BLK_SZ) {
-                ret = snprintf(buf + off, 3, "%02hhx", *hash++);
-                if (ret != -1)
-                        off += ret;
-        }
-}
-
-int
-test_sha2_init(void)
-{
-        int ret = 0;
-        struct hash_state* hash = malloc(sizeof(struct hash_state));
-
-        sha2_init(hash);
-        ret = !(hash->len == 0);
-        ret |= !(hash->hx[0] == 0x6a09e667);
-        ret |= !(hash->hx[1] == 0xbb67ae85);
-        ret |= !(hash->hx[2] == 0x3c6ef372);
-        ret |= !(hash->hx[3] == 0xa54ff53a);
-        ret |= !(hash->hx[4] == 0x510e527f);
-        ret |= !(hash->hx[5] == 0x9b05688c);
-        ret |= !(hash->hx[6] == 0x1f83d9ab);
-        ret |= !(hash->hx[7] == 0x5be0cd19);
-
-        return !ret;
-}
-
 int
 test_sha2(void)
 {
@@ -337,4 +326,60 @@ opjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"};
         free(buf);
 
         return !res;
+}
+
+void
+sha2_to_str(uint8_t* hash, char* buf)
+{
+        int ret, off = 0;
+        while (off < SHA_BLK_SZ) {
+                ret = snprintf(buf + off, 3, "%02hhx", *hash++);
+                if (ret != -1)
+                        off += ret;
+        }
+}
+
+int
+test_sha2_to_str()
+{
+        char* test = "Hello World!\n";
+        char* str = calloc(1,32);
+        char* tmp = calloc(1,32);
+        char* out = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
+        void* buf = calloc(1, sizeof(struct hash_state));
+
+        sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
+        sha2_to_str((uint8_t*)tmp, str);
+        return !strncmp(str, out, 32);
+}
+
+void
+sha2_to_strn(uint8_t* hash, char* buf, uint8_t bytes)
+{
+        int ret, off = 0;
+        while (off < bytes) {
+                ret = snprintf(buf + off, 3, "%02hhx", *hash++);
+                if (ret != -1)
+                        off += ret;
+        }
+}
+
+int
+test_sha2_to_strn()
+{
+        char* test = "Hello World!\n";
+        char* str = calloc(1,64);
+        char* tmp = calloc(1,64);
+        char* out = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
+        void* buf = calloc(1, sizeof(struct hash_state));
+        int ret = 1;
+
+        sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
+
+        for (uint8_t i = 0; i < SHA_BLK_SZ; i++) {
+                sha2_to_strn((uint8_t*)tmp, str, i);
+                ret &= !strncmp(str, out, i);
+        }
+
+        return ret;
 }
