@@ -6,6 +6,7 @@
 
 struct data_list* init_data_list(struct slabs* slabs);
 void add_file_to_list(struct data_list* restrict data, char* f_name);
+int is_in_data_list(struct data_list* list, char* str);
 
 /* Unit Tests */
 int test_data_list_init(void);

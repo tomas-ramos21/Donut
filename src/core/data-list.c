@@ -138,3 +138,9 @@ test_add_file_to_data_list(void)
 
         return ret;
 }
+
+int
+is_in_data_list(struct data_list* list, char* str)
+{
+        return 1;
+}
