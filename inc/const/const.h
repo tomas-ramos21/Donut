@@ -3,7 +3,6 @@
 
 /**
  * @file const.h
- *
  * Contains all constants to be used in Donut and their documentation.
  */
 
@@ -55,14 +54,28 @@
  */
 #define DATA_FILE_NAME_SIZE 32
 
-/* Argument Constraints */
+/**
+ * @def MAX_ARG_SZ
+ * Number of characters allowed for optional argument size.
+ */
 #define MAX_ARG_SZ 127
 
-/* Argument Indexes */
+/**
+ * @def NAME_ARG_IDX
+ * Index of the optional argument value.
+ */
 #define NAME_ARG_IDX 0
 
-/* Argument Bits */
+/**
+ * @def RECURSIVE_OPT
+ * Bit that is set when the recursive option is selected.
+ */
 #define RECURSIVE_OPT 0x1
+
+/**
+ * @def NAME_OPT
+ * Bit that is set when the name option is selected.
+ */
 #define NAME_OPT 0x2
 
 #endif // __CONST_H_

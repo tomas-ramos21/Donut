@@ -1,23 +1,28 @@
 #include "io/fio.h"
 #include "dirent.h"
 #include "mem/slab.h"
+#include "string.h"
+#include "sys/stat.h"
+#include "stdio.h"
 #include "const/const.h"
 #include "io/fio-utils.h"
 
 /* TODO: Finish implementing "get_repo_data_list" */
 /* TODO: Implement data files data structure */
 
-void**
-get_repo_data_list(struct slabs* slabs, void** pgs)
+void
+get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list)
 {
-        DIR* dir = xopendir(DATA_FOLDER_RELATIVE);
+        struct stat st;
         struct dirent* entry;
-        void** ret = 0x0;
+
+        DIR* dir = xopendir(DATA_FOLDER_RELATIVE);
 
         while ((entry = readdir(dir))) {
-                if (entry->d_type == DT_REG)
-                        *ret = entry->d_name;
-        }
+                if (!strncmp(entry->d_name, ".", 2) ||
+                    !strncmp(entry->d_name, "..", 2))
+                        continue;
 
-        return ret;
+                add_file_to_list(list, entry->d_name);
+        }
 }

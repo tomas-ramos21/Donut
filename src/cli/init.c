@@ -31,8 +31,7 @@
  * @returns In case of success returns 0 otherwise -1
  */
 int
-donut_init(const int argc, char** argv, int arg_idx, char* opts,
-           uint64_t oflags)
+donut_init(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
         register int st;
         char* path = argv[arg_idx];
@@ -53,8 +52,8 @@ donut_init(const int argc, char** argv, int arg_idx, char* opts,
         st |= mkdir(DATA_FOLDER_RELATIVE, DIR_CTOR_MODE);
         if (st) {
                 printf(DONUT_ERROR "Failed initialization.\n");
-                rmdir(DONUT_FOLDER_RELATIVE);
                 rmdir(DATA_FOLDER_RELATIVE);
+                rmdir(DONUT_FOLDER_RELATIVE);
                 return -1;
         }
 

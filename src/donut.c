@@ -21,7 +21,7 @@ donut_main(int argc, char** argv)
 
         if (!argv[1]) {
                 printf(DONUT "No command was given. Use \"help\" to learn about\
-Donut.\n");
+ Donut.\n");
                 exit(1);
         }
 
