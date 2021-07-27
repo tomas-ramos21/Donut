@@ -18,10 +18,9 @@
 
 In order to install Donut follow the steps:
 
-1. Compile a version of donut under the `bin` folder
-``` sh
-./configure
-make
+1. Compile a version of donut under a local `bin` folder
+```
+./INSTALL.sh
 ```
 2. Test Donut to make sure it's working as expected
 ```
@@ -29,6 +28,6 @@ make
 ./bin/donut conf
 ```
 3. Install Donut in your system
-``` sh
+```
 make install
 ```
