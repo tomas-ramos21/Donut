@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "donut.h"
+#include "unistd.h"
 #include "string.h"
 #include "cli/cmd.h"
 #include "misc/decorations.h"
@@ -10,6 +11,7 @@
 #define CMD_CNT 5
 #define MAX_ARG_SIZE 1024
 #define RECURSIVE_OPT 0x1
+#define NAME_OPT 0x2
 
 static int
 cmd_max_args(const char* cmd, const int len)
@@ -67,8 +69,9 @@ donut_main(int argc, char** argv)
         struct slabs* slabs = init_slabs();
 
         if (!argv[1]) {
-                printf(DONUT "No command was given.\n");
-                exit(0);
+                printf(DONUT "No command was given. Use \"help\" to learn about\
+Donut.\n");
+                exit(1);
         }
 
         cmd = argv[1];

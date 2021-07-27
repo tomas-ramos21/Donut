@@ -55,4 +55,14 @@
  */
 #define DATA_FILE_NAME_SIZE 32
 
+/* Argument Constraints */
+#define MAX_ARG_SZ 127
+
+/* Argument Indexes */
+#define NAME_ARG_IDX 0
+
+/* Argument Bits */
+#define RECURSIVE_OPT 0x1
+#define NAME_OPT 0x2
+
 #endif // __CONST_H_

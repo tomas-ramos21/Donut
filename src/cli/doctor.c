@@ -7,6 +7,7 @@
 #include "misc/colour.h"
 #include "crypto/sha2.h"
 #include "core/data-list.h"
+#include "cli/arg-parse.h"
 
 /**
  * @file doctor.c
@@ -191,6 +192,16 @@ test_core_module(void)
                 printf(RED "- add_file_to_list: failed" RESET "\n");
 }
 
+static void
+test_cli_arg_parsing(void)
+{
+        printf("\n[Argument Parsing Module]\n");
+        if (test_parse_opts())
+                printf(GREEN "- parse_opts: passed" RESET "\n");
+        else
+                printf(RED "- parse_opts: failed" RESET "\n");
+}
+
 /**
  * Display all unit tests results to the user.
  *
@@ -206,5 +217,6 @@ doctor(const int argc, const struct parsed_args* args)
         test_crypto();
         test_memory_utilities();
         test_core_module();
+        test_cli_arg_parsing();
         return 0;
 }
