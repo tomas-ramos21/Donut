@@ -1,9 +1,8 @@
 #!/bin/bash
 cd ${0%/*}
 
-echo "[Donut] Running Autotools"
+echo "[Donut] Compiling"
 ./configure
-echo "[Donut] Running Makefile"
 make
-make install
-make clean
+echo -e "[Donut] Compilation Complete\n"
+echo "You may install Donut by using \`make install\`"
