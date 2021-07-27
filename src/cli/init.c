@@ -1,4 +1,6 @@
 #include "cli/cmd.h"
+#include "mem/slab.h"
+#include "errno.h"
 #include "unistd.h"
 #include "stdio.h"
 #include "const/const.h"
@@ -29,21 +31,28 @@
  * @returns In case of success returns 0 otherwise -1
  */
 int
-donut_init(const int argc, const struct parsed_args* args)
+donut_init(const int argc, char** argv, int arg_idx, char* opts,
+           uint64_t oflags)
 {
         register int st;
-        char* path = (argc) ? args->args : ".";
+        char* path = argv[arg_idx];
 
+        path = (path) ? path : ".";
         st = chdir(path);
         if (st) {
-                printf(DONUT "Path provided is invalid.\n");
+                printf(DONUT_ERROR "Path provided is invalid: %s\n", path);
                 return -1;
         }
 
         st = mkdir(DONUT_FOLDER_RELATIVE, DIR_CTOR_MODE);
-        st = st | mkdir(DATA_FOLDER_RELATIVE, DIR_CTOR_MODE);
+        if (st && errno == EEXIST) {
+                printf(DONUT_ERROR "Donut is already initialized.\n");
+                exit(0);
+        }
+
+        st |= mkdir(DATA_FOLDER_RELATIVE, DIR_CTOR_MODE);
         if (st) {
-                printf(DONUT "Failed initialization.\n");
+                printf(DONUT_ERROR "Failed initialization.\n");
                 rmdir(DONUT_FOLDER_RELATIVE);
                 rmdir(DATA_FOLDER_RELATIVE);
                 return -1;

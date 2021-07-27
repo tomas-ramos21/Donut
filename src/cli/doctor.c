@@ -209,7 +209,7 @@ test_cli_arg_parsing(void)
  * @param args Array of arguments
  */
 int
-doctor(const int argc, const struct parsed_args* args)
+doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
         test_mem_alloc();
         test_mem_slab();

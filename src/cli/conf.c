@@ -14,7 +14,7 @@
  * @param args Array of arguments
  */
 void
-conf(const int argc, const struct parsed_args* args)
+conf(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
         printf("Page Size: %u\n\
 Cache Line Size: %u\n\

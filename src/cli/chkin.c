@@ -106,34 +106,35 @@ chkin_file(const char* src, struct stat* f)
 }
 
 int
-chkin(const int argc, const struct parsed_args* args)
+chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
-        char* src;
-        register int ret;
-        register mode_t f_tp;
-        struct stat f = {0};
+ /*        char* src; */
+ /*        register int ret; */
+ /*        register mode_t f_tp; */
+ /*        struct stat f = {0}; */
 
-        if (validate_init() || !argc) {
-                printf(DONUT_ERROR "Donut isn't initialized or no path/file was\
- given. Try running \"donut init\" or check your arguments.\n");
-                return DEF_ERR;
-        }
+ /*        if (validate_init() || !argc) { */
+ /*                printf(DONUT_ERROR "Donut isn't initialized or no path/file was\ */
+ /* given. Try running \"donut init\" or check your arguments.\n"); */
+ /*                return DEF_ERR; */
+ /*        } */
 
-        if (stat(args->args, &f)) {
-                printf(DONUT_ERROR "Path provided is invalid.\n");
-                return DEF_ERR;
-        }
+ /*        if (stat(args->args, &f)) { */
+ /*                printf(DONUT_ERROR "Path provided is invalid.\n"); */
+ /*                return DEF_ERR; */
+ /*        } */
 
-        src = args->args;
-        f_tp = f.st_mode;
-        if (f_tp & S_IFDIR)
-                ret = chkin_dir(src);
-        else if (f_tp & S_IFREG)
-                ret = chkin_file(src, &f);
-        else {
-                printf(DONUT_ERROR "Path given is not a directory or regular file.\n");
-                ret = DEF_ERR;
-        }
+ /*        src = args->args; */
+ /*        f_tp = f.st_mode; */
+ /*        if (f_tp & S_IFDIR) */
+ /*                ret = chkin_dir(src); */
+ /*        else if (f_tp & S_IFREG) */
+ /*                ret = chkin_file(src, &f); */
+ /*        else { */
+ /*                printf(DONUT_ERROR "Path given is not a directory or regular file.\n"); */
+ /*                ret = DEF_ERR; */
+ /*        } */
 
-        return ret;
+ /*        return ret; */
+        return 0;
 }
