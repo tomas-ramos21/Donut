@@ -101,9 +101,3 @@ test_parse_opts(void)
 
         return ret;
 }
-
-void
-parse_args(int argc, char** argv, int optind, void*buf)
-{
-
-}
