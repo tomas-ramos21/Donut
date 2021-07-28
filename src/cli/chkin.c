@@ -50,17 +50,17 @@ chkin_dir(const char* src)
 static int
 chkin_file(const char* src, struct stat* f, char* df_name)
 {
-        int src_fd, i;
-        off_t f_sz = f->st_size, bytes;
-        int t_pgs = (f_sz / PAGE_SIZE) + !((f_sz % PAGE_SIZE) == 0);
-        void* pgs[t_pgs];
+        int src_fd, i = 1;
+        off_t bytes;
 
         /* Get memory */
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
         void* hash = alloc_slab(slabs, PAGE_SIZE);
+        void* buf = alloc_slab(slabs, PAGE_SIZE);
         uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
+        // TODO: Implement "xmkdir"
         /* Build CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
         cwd = strncat(cwd, DATA_FOLDER, 13);
@@ -72,16 +72,14 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         src_fd = xopen(src, O_RDONLY);
 
         /* Read data & compute SHA-2 Simultaneously */
-        i = 0;
         sha2_init(hash);
-        while (t_pgs--) {
-                pgs[i] = alloc_slab(slabs, PAGE_SIZE);
-                bytes = xread(src_fd, pgs[i], PAGE_SIZE);
-                sha2_update(pgs[i++], str, hash, bytes);
-        }
-        sha2_to_str(str, (char*)(str + SHA_BLK_SZ));
+        do {
+                bytes = xread(src_fd, buf, PAGE_SIZE);
+                sha2_update(buf, str, hash, bytes);
+                memset(buf, 0x0, bytes);
+        } while (bytes);
+        sha2_to_strn(str, (char*)(str + SHA_BLK_SZ), DATA_FILE_NAME_SIZE);
         str += SHA_BLK_SZ;
-        memset(str + 31, 0x0, 33);
 
         /* Get list of existing hashes */
         struct data_list* list = init_data_list(slabs);
