@@ -11,12 +11,11 @@
 /* TODO: Implement data files data structure */
 
 void
-get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list)
+get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list,
+                   char* path)
 {
-        struct stat st;
         struct dirent* entry;
-
-        DIR* dir = xopendir(DATA_FOLDER_RELATIVE);
+        DIR* dir = xopendir(path);
 
         while ((entry = readdir(dir))) {
                 if (!strncmp(entry->d_name, ".", 2) ||

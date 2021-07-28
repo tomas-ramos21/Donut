@@ -3,7 +3,7 @@
 
 #include "core/data-list.h"
 
-void get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list);
+void get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list, char* path);
 
 
 #endif // FIO-UTILS_H_

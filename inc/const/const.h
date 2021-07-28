@@ -28,7 +28,7 @@
  * @def DATA_FOLDER
  * Donut's data folder to be appended to path strings.
  */
-#define DATA_FOLDER "/.donut/data"
+#define DATA_FOLDER "/.donut/data/"
 
 /**
  * @def CONFIG_FILE

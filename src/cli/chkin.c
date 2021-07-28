@@ -48,10 +48,10 @@ chkin_dir(const char* src)
 
 
 static int
-chkin_file(const char* src, struct stat* f)
+chkin_file(const char* src, struct stat* f, char* df_name)
 {
-        off_t f_sz = f->st_size, bytes;
         int src_fd, i;
+        off_t f_sz = f->st_size, bytes;
         int t_pgs = (f_sz / PAGE_SIZE) + !((f_sz % PAGE_SIZE) == 0);
         void* pgs[t_pgs];
 
@@ -61,10 +61,14 @@ chkin_file(const char* src, struct stat* f)
         void* hash = alloc_slab(slabs, PAGE_SIZE);
         uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
-        /* Get CWD & open file */
+        /* Build CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, DATA_FOLDER, 12);
-        printf("CWD: %s\n", cwd);
+        cwd = strncat(cwd, DATA_FOLDER, 13);
+        if (*df_name) {
+                cwd = strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
+                cwd = strncat(cwd, "/", 1);
+                mkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+        }
         src_fd = xopen(src, O_RDONLY);
 
         /* Read data & compute SHA-2 Simultaneously */
@@ -81,9 +85,8 @@ chkin_file(const char* src, struct stat* f)
 
         /* Get list of existing hashes */
         struct data_list* list = init_data_list(slabs);
-        get_repo_data_list(slabs, 0x0, list);
+        get_repo_data_list(slabs, 0x0, list, cwd);
 
-        cwd = strncat(cwd, "/", 1);
         if (!is_in_data_list(list, (char*)str))
                 i = rename(src, strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE));
 
@@ -101,6 +104,7 @@ int
 chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
         char* src;
+        char* df_name = opts + (NAME_ARG_IDX * MAX_ARG_SZ);
         register int ret;
         register mode_t f_tp;
         struct stat f = {0};
@@ -121,7 +125,7 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         if (f_tp & S_IFDIR)
                 ret = chkin_dir(src);
         else if (f_tp & S_IFREG)
-                ret = chkin_file(src, &f);
+                ret = chkin_file(src, &f, df_name);
         else {
                 printf(DONUT_ERROR "Path given is not a directory or regular file.\n");
                 ret = DEF_ERR;
