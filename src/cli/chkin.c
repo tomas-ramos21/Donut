@@ -77,39 +77,23 @@ chkin_file(const char* src, struct stat* f)
         }
         sha2_to_str(str, (char*)(str + SHA_BLK_SZ));
         str += SHA_BLK_SZ;
-        printf("Hash: %s\n", str);
         memset(str + 31, 0x0, 33);
-        printf("Truncated Hash: %s\n", str);
 
         /* Get list of existing hashes */
         struct data_list* list = init_data_list(slabs);
         get_repo_data_list(slabs, 0x0, list);
 
-        if (is_in_data_list(list, str))
+        cwd = strncat(cwd, "/", 1);
+        if (!is_in_data_list(list, (char*)str))
+                i = rename(src, strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE));
 
-        /* Get Sha-2 */
-        /* f_sz = f->st_size; */
-        /* uint8_t* hash = alloc_slab(slabs, PAGE_SIZE); */
-        /* void* hx = hash + 65; */
-        /* void* str = hash + 65 + 365; */
-        /* sha2_hash(pg, hash, hx, f_sz); */
-        /* sha2_to_str(hash, str); */
-        /* memset(str--, 0x0, 64); */
-        /* *hash = '/'; */
-
-        /* strncpy((char*)(hash + 1), (char*)(hash + 65 + 365), 32); */
-        /* printf("Hash: %s\n", hash); */
-        /* printf("CWD: %s\n", cwd); */
-        /* char* name = strncat(cwd, hash, 32 + 1); */
-        /* printf("File Path: %s\n", name); */
-        /* dst_fd = xopen(name, O_RDWR | O_CREAT, 0755); */
-        /* f_sz = xwrite(dst_fd, pg, f_sz); */
+        if (!i)
+                printf(DONUT_SUCCESS "File was added to the repository.\n");
 
         /* Release resources */
-        /* xclose(dir_fd); */
-        /* xclose(src_fd); */
-        /* xclose(dst_fd); */
+        xclose(src_fd);
         clear_slabs(slabs);
+
         return 0;
 }
 

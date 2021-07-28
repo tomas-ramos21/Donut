@@ -140,7 +140,21 @@ test_add_file_to_data_list(void)
 }
 
 int
-is_in_data_list(struct data_list* list, char* str)
+is_in_data_list(struct data_list* restrict list, char* str)
 {
-        return 1;
+        int ret = 0;
+        char* base_addr;
+
+        for (uint32_t i = 0; i < list->pg_cnt ; i++) {
+                base_addr = list->pgs[i];
+
+                if (ret || *base_addr == 0x0)
+                        return ret;
+
+                for (uint32_t j = 0; j < ELEM_PER_PG; j++)
+                        ret |= !strncmp(base_addr + (j * DATA_FILE_NAME_SIZE),
+                                        str, DATA_FILE_NAME_SIZE);
+        }
+
+        return ret;
 }
