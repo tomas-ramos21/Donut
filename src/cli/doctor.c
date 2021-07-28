@@ -129,6 +129,11 @@ test_io_fio(void)
                 printf(GREEN "- xmkdir: passed" RESET "\n");
         else
                 printf(RED "- xmkdir: failed" RESET "\n");
+
+        if (test_xrename())
+                printf(GREEN "- xrename: passed" RESET "\n");
+        else
+                printf(RED "- xrename: failed" RESET "\n");
 }
 
 /**

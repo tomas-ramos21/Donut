@@ -435,10 +435,53 @@ test_xmkdir(void)
         const char* path = getenv("HOME");
         char* dir_name = calloc(1, PAGE_SIZE);
 
-        strncpy(dir_name, path, PAGE_SIZE);
+        strncpy(dir_name, path, PAGE_SIZE - 1);
         strncat(dir_name, "/test", 5);
 
         ret = xmkdir(dir_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
         ret |= rmdir(dir_name);
         return !ret;
+}
+
+int
+xrename(const char* old, const char* new)
+{
+        int ret = rename(old, new);
+
+        if (ret) {
+                printf(DONUT_ERROR "Failed to rename file.\n");
+                exit(DEF_ERR);
+        }
+
+        return ret;
+}
+
+int
+test_xrename(void)
+{
+        int ret = 0;
+        char* old = calloc(1, PAGE_SIZE);
+        char* new = calloc(1, PAGE_SIZE);
+        const char* home = getenv("HOME");
+
+        strncpy(old, home, PAGE_SIZE - 1);
+        strncat(old, "/test1", 6);
+
+        strncpy(new, home, PAGE_SIZE - 1);
+        strncat(new, "/test2", 6);
+
+        ret = open(old, O_RDWR | O_CREAT);
+        if (ret < 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
+
+        ret = !xrename(old, new);
+
+cleanup_return:
+        remove(old);
+        remove(new);
+        free(old);
+        free(new);
+        return ret;
 }
