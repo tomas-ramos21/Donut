@@ -421,7 +421,6 @@ xmkdir(const char *pathname, mode_t mode)
 
         if (ret) {
                 printf(DONUT_ERROR "Failed to create directory.\n");
-                printf("Erro: %d\n", errno);
                 exit(DEF_ERR);
         }
 
@@ -431,16 +430,17 @@ xmkdir(const char *pathname, mode_t mode)
 int
 test_xmkdir(void)
 {
-        int ret = 0;
+        int ret;
         const char* path = getenv("HOME");
         char* dir_name = calloc(1, PAGE_SIZE);
 
         strncpy(dir_name, path, PAGE_SIZE - 1);
         strncat(dir_name, "/test", 5);
+        ret = !xmkdir(dir_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 
-        ret = xmkdir(dir_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
-        ret |= rmdir(dir_name);
-        return !ret;
+        rmdir(dir_name);
+        free(dir_name);
+        return ret;
 }
 
 int
@@ -475,6 +475,7 @@ test_xrename(void)
                 ret = 0;
                 goto cleanup_return;
         }
+        close(ret);
 
         ret = !xrename(old, new);
 
@@ -483,5 +484,44 @@ cleanup_return:
         remove(new);
         free(old);
         free(new);
+        return ret;
+}
+
+int
+xchmod(const char* path, mode_t mode)
+{
+        int ret = chmod(path, mode);
+
+        if (ret) {
+                printf(DONUT_ERROR "Failed to change the permissions of the\
+ file/directory.\n");
+                exit(DEF_ERR);
+        }
+
+        return ret;
+}
+
+int
+test_xchmod(void)
+{
+        int ret = 0;
+        char* f = calloc(1, PAGE_SIZE);
+        const char* home = getenv("HOME");
+
+        strncpy(f, home, PAGE_SIZE - 1);
+        strncat(f, "/test12345", 10);
+
+        ret = open(f, O_RDWR | O_CREAT);
+        if (ret < 0) {
+                ret = 0;
+                goto cleanup_return;
+        }
+        close(ret);
+
+        ret = !xchmod(f, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
+
+cleanup_return:
+        remove(f);
+        free(f);
         return ret;
 }

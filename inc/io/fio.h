@@ -125,10 +125,11 @@ DIR* xopendir(const char* path);
  */
 int xclosedir(DIR* dir);
 
-
 int xmkdir(const char *pathname, mode_t mode);
 
 int xrename(const char* old, const char* new);
+
+int xchmod(const char* path, mode_t mode);
 
 /* Unit Tests */
 
@@ -191,5 +192,7 @@ int test_xclosedir(void);
 int test_xmkdir(void);
 
 int test_xrename(void);
+
+int test_xchmod(void);
 
 #endif // __FIO_H_

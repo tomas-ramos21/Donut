@@ -134,6 +134,11 @@ test_io_fio(void)
                 printf(GREEN "- xrename: passed" RESET "\n");
         else
                 printf(RED "- xrename: failed" RESET "\n");
+
+        if (test_xchmod())
+                printf(GREEN "- xchmod: passed" RESET "\n");
+        else
+                printf(RED "- xchmod: failed" RESET "\n");
 }
 
 /**

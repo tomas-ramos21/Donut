@@ -50,7 +50,7 @@ chkin_dir(const char* src)
 static int
 chkin_file(const char* src, struct stat* f, char* df_name)
 {
-        int src_fd, i = 1;
+        int src_fd;
         off_t bytes;
 
         /* Get memory */
@@ -60,7 +60,6 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         void* buf = alloc_slab(slabs, PAGE_SIZE);
         uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
-        // TODO: Implement "xmkdir"
         // TODO: Implement "xgetcwd"
         /* Build CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
@@ -68,7 +67,7 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         if (*df_name) {
                 strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
                 strncat(cwd, "/", 1);
-                mkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+                xmkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
         src_fd = xopen(src, O_RDONLY);
 
@@ -86,12 +85,10 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         struct data_list* list = init_data_list(slabs);
         get_repo_data_list(slabs, 0x0, list, cwd);
 
-        // TODO: Implement "xrename"
-        // TODO: Implement "xchmod"
         if (!is_in_data_list(list, (char*)str)) {
                 strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE);
-                rename(src, cwd);
-                chmod(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+                xrename(src, cwd);
+                xchmod(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
 
         /* Release resources */
