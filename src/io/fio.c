@@ -8,6 +8,7 @@
 #include "sys/errno.h"
 #include "sys/stat.h"
 #include "unistd.h"
+#include "fcntl.h"
 #include "string.h"
 #include "const/nix_cmds.h"
 #include "stdarg.h"
@@ -410,5 +411,34 @@ test_xclosedir(void)
         DIR* dir = opendir(path);
         int ret = (dir) ? 1 : 0;
         ret = xclosedir(dir);
+        return !ret;
+}
+
+int
+xmkdir(const char *pathname, mode_t mode)
+{
+        int ret = mkdir(pathname, mode);
+
+        if (ret) {
+                printf(DONUT_ERROR "Failed to create directory.\n");
+                printf("Erro: %d\n", errno);
+                exit(DEF_ERR);
+        }
+
+        return ret;
+}
+
+int
+test_xmkdir(void)
+{
+        int ret = 0;
+        const char* path = getenv("HOME");
+        char* dir_name = calloc(1, PAGE_SIZE);
+
+        strncpy(dir_name, path, PAGE_SIZE);
+        strncat(dir_name, "/test", 5);
+
+        ret = xmkdir(dir_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+        ret |= rmdir(dir_name);
         return !ret;
 }

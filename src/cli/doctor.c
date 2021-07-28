@@ -124,6 +124,11 @@ test_io_fio(void)
                 printf(GREEN "- xclosedir: passed" RESET "\n");
         else
                 printf(RED "- xclosedir: failed" RESET "\n");
+
+        if (test_xmkdir())
+                printf(GREEN "- xmkdir: passed" RESET "\n");
+        else
+                printf(RED "- xmkdir: failed" RESET "\n");
 }
 
 /**

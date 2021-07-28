@@ -125,6 +125,9 @@ DIR* xopendir(const char* path);
  */
 int xclosedir(DIR* dir);
 
+
+int xmkdir(const char *pathname, mode_t mode);
+
 /* Unit Tests */
 
 /**
@@ -182,5 +185,7 @@ int test_xopendir(void);
  * @returns In case of success the return value is 1 otheriwse its 0.
  */
 int test_xclosedir(void);
+
+int test_xmkdir(void);
 
 #endif // __FIO_H_

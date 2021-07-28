@@ -61,17 +61,18 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
         // TODO: Implement "xmkdir"
+        // TODO: Implement "xgetcwd"
         /* Build CWD & open file */
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, DATA_FOLDER, 13);
+        strncat(cwd, DATA_FOLDER, 13);
         if (*df_name) {
-                cwd = strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
-                cwd = strncat(cwd, "/", 1);
+                strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
+                strncat(cwd, "/", 1);
                 mkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
         src_fd = xopen(src, O_RDONLY);
 
-        /* Read data & compute SHA-2 Simultaneously */
+        /* Compute SHA-2 */
         sha2_init(hash);
         do {
                 bytes = xread(src_fd, buf, PAGE_SIZE);
@@ -81,20 +82,21 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         sha2_to_strn(str, (char*)(str + SHA_BLK_SZ), DATA_FILE_NAME_SIZE);
         str += SHA_BLK_SZ;
 
-        /* Get list of existing hashes */
+        /* Get existing files & add file if it's not present */
         struct data_list* list = init_data_list(slabs);
         get_repo_data_list(slabs, 0x0, list, cwd);
 
-        if (!is_in_data_list(list, (char*)str))
-                i = rename(src, strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE));
-
-        if (!i)
-                printf(DONUT_SUCCESS "File was added to the repository.\n");
+        // TODO: Implement "xrename"
+        // TODO: Implement "xchmod"
+        if (!is_in_data_list(list, (char*)str)) {
+                strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE);
+                rename(src, cwd);
+                chmod(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+        }
 
         /* Release resources */
         xclose(src_fd);
         clear_slabs(slabs);
-
         return 0;
 }
 
