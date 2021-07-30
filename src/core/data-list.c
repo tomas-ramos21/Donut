@@ -103,7 +103,7 @@ add_file_to_list(struct data_list* restrict data, char* f_name)
 
         data->idx++;
         data->elem_l--;
-        strncpy(elem, f_name, 31);
+        strncpy(elem, f_name, DATA_FILE_NAME_SIZE);
 }
 
 int
@@ -151,9 +151,11 @@ is_in_data_list(struct data_list* restrict list, char* str)
                 if (ret || *base_addr == 0x0)
                         return ret;
 
-                for (uint32_t j = 0; j < ELEM_PER_PG; j++)
+                for (uint32_t j = 0; j < ELEM_PER_PG; j++) {
                         ret |= !strncmp(base_addr + (j * DATA_FILE_NAME_SIZE),
                                         str, DATA_FILE_NAME_SIZE);
+                        printf("Data: %s\n", base_addr + (j * DATA_FILE_NAME_SIZE));
+                }
         }
 
         return ret;

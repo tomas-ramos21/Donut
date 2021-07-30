@@ -3,6 +3,7 @@
 #include "mem/slab.h"
 #include "mem/mem_utils.h"
 #include "io/fio.h"
+#include "io/fio-utils.h"
 #include "string.h"
 #include "misc/colour.h"
 #include "crypto/sha2.h"
@@ -217,6 +218,16 @@ test_cli_arg_parsing(void)
                 printf(RED "- parse_opts: failed" RESET "\n");
 }
 
+static void
+test_io_fio_utils(void)
+{
+        printf("\n[File I/O Utilities Module]\n");
+        if (test_xgetcwd())
+                printf(GREEN "- xgetcwd: passed" RESET "\n");
+        else
+                printf(RED "- xgetcwd: failed" RESET "\n");
+}
+
 /**
  * Display all unit tests results to the user.
  *
@@ -233,5 +244,6 @@ doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         test_memory_utilities();
         test_core_module();
         test_cli_arg_parsing();
+        test_io_fio_utils();
         return 0;
 }
