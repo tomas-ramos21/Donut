@@ -67,7 +67,6 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         if (*df_name) {
                 strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
 
-                printf("Res: %d\n", stat(cwd, &dir));
                 if (stat(cwd, &dir))
                         xmkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 
@@ -88,12 +87,9 @@ chkin_file(const char* src, struct stat* f, char* df_name)
         /* Get existing files & add file if it's not present */
         struct data_list* list = init_data_list(slabs);
         get_repo_data_list(slabs, 0x0, list, cwd);
-        printf("Present: %d\n", is_in_data_list(list, (char*)str));
-        printf("Path: %s\n", str);
         if (!is_in_data_list(list, (char*)str)) {
                 strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE);
                 xrename(src, cwd);
-                printf("CWD: %s\n", cwd);
                 xchmod(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
 

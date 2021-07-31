@@ -23,7 +23,6 @@ get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list,
         while ((entry = readdir(dir))) {
                 if (entry->d_type != DT_REG)
                         continue;
-                printf("Type: %d\n", (entry->d_type == DT_REG));
 
                 add_file_to_list(list, entry->d_name);
         }
