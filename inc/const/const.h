@@ -78,4 +78,6 @@
  */
 #define NAME_OPT 0x2
 
+#define DEFAULT_DF "main"
+
 #endif // __CONST_H_

@@ -41,4 +41,6 @@ int doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags
 
 int chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags);
 
+int ls_data(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags);
+
 #endif // __CMD_H_

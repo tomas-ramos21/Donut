@@ -12,6 +12,7 @@
 #include "io/fio.h"
 #include "io/fio-utils.h"
 #include "core/data-list.h"
+#include "tools/validation.h"
 #include "string.h"
 
 #define CTOR_MODE S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH
@@ -32,22 +33,6 @@ compute_file_sha2(int fd, void* hash, void* buf, uint8_t* str)
                 sha2_update(buf, str, hash, bytes);
                 memset(buf, 0x0, bytes);
         } while (bytes);
-}
-
-/**
-  * Determines if there is donut is setup correctly in the current path.
-  * @returns If donut is initialized 1 is returned otherwise 0
-  */
-static int
-validate_init(void)
-{
-        int ret;
-        struct stat info = {0};
-
-        ret = stat(DONUT_FOLDER_RELATIVE, &info);
-        ret &= stat(DATA_FOLDER_RELATIVE, &info);
-
-        return ret;
 }
 
 static int
@@ -135,7 +120,7 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         register mode_t f_tp;
         struct stat f, dir;
 
-        if (validate_init() || !(argc - 2)) {
+        if (validate_donut_repo() || !(argc - 2)) {
                 printf(DONUT_ERROR "Donut isn't initialized or no path/file was\
  given. Try running \"donut init\" or check your arguments.\n");
                 return DEF_ERR;
@@ -157,7 +142,7 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         /* Build CWD & open file */
         cwd = xgetcwd(cwd, PAGE_SIZE);
         strncat(cwd, DATA_FOLDER, 13);
-        if (*df_name) {
+        if (*df_name && strncmp(DEFAULT_DF, df_name, 4)) {
                 strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
 
                 if (stat(cwd, &dir))

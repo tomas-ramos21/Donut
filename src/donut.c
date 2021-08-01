@@ -29,15 +29,17 @@ donut_main(int argc, char** argv)
         len = strnlen(cmd, 15);
         args_idx = parse_opts(argc, argv, buf, &oflags);
 
-        if (strncmp("init", cmd, len) == 0)
+        if (!strncmp("init", cmd, len))
                 ret = donut_init(argc, argv, args_idx, buf, oflags);
-        else if (strncmp("chkin", cmd, len) == 0)
+        else if (!strncmp("chkin", cmd, len))
                 ret = chkin(argc, argv, args_idx, buf, oflags);
-        else if (strncmp("doctor", cmd, len) == 0)
+        else if (!strncmp("doctor", cmd, len))
                 ret = doctor(argc, argv, args_idx, buf, oflags);
-        else if (strncmp("conf", cmd, len) == 0)
+        else if (!strncmp("conf", cmd, len))
                 conf(argc, argv, args_idx, buf, oflags);
-        else if (strncmp("help", cmd, len) == 0)
+        else if (!strncmp("ls-data", cmd, len))
+                ls_data(argc, argv, args_idx, buf, oflags);
+        else if (!strncmp("help", cmd, len))
                 printf(HELP_CMD);
         else
                 printf(DONUT_ERROR "Unrecognized command\n" HELP_CMD);
