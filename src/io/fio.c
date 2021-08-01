@@ -376,7 +376,7 @@ xopendir(const char* path)
         DIR* dir = opendir(path);
 
         if (!dir) {
-                printf(RED DONUT RESET "Failed to open the directory: %s\n", path);
+                printf(RED DONUT RESET "Failed to open the directory.\n");
                 exit(DEF_ERR);
         }
 
