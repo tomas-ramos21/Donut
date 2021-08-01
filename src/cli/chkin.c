@@ -21,6 +21,19 @@
  * TODO: Implement a multithread option in case of large amount of files
  */
 
+inline static void
+compute_file_sha2(int fd, void* hash, void* buf, uint8_t* str)
+{
+        off_t bytes;
+
+        sha2_init(hash);
+        do {
+                bytes = xread(fd, buf, PAGE_SIZE);
+                sha2_update(buf, str, hash, bytes);
+                memset(buf, 0x0, bytes);
+        } while (bytes);
+}
+
 /**
   * Determines if there is donut is setup correctly in the current path.
   * @returns If donut is initialized 1 is returned otherwise 0
@@ -43,7 +56,6 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
 {
         DIR* dir;
         int src_fd;
-        off_t bytes;
         char* f_name;
         size_t name_len;
         struct dirent* entry;
@@ -69,15 +81,9 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
                 name_len = strlen(f_name);
                 strncat(src_cp, f_name, name_len);
                 src_fd = xopen(src_cp, O_RDONLY);
-                sha2_init(hash);
 
                 /* Read File & Compute Hash */
-                do {
-                        bytes = xread(src_fd, buf, PAGE_SIZE);
-                        sha2_update(buf, str, hash, bytes);
-                        memset(buf, 0x0, bytes);
-                } while (bytes);
-
+                compute_file_sha2(src_fd, hash, buf, str);
                 sha2_to_strn(str, (char*)(str + SHA_BLK_SZ), DATA_FILE_NAME_SIZE - 1);
                 str += SHA_BLK_SZ;
 
@@ -104,17 +110,9 @@ static int
 chkin_file(const char* src, struct data_list* list, char* cwd, void* hash,
            void* buf, uint8_t* str)
 {
-        off_t bytes;
         int src_fd = xopen(src, O_RDONLY);
 
-        sha2_init(hash);
-
-        do {
-                bytes = xread(src_fd, buf, PAGE_SIZE);
-                sha2_update(buf, str, hash, bytes);
-                memset(buf, 0x0, bytes);
-        } while (bytes);
-
+        compute_file_sha2(src_fd, hash, buf, str);
         sha2_to_strn(str, (char*)(str + SHA_BLK_SZ), DATA_FILE_NAME_SIZE - 1);
         str += SHA_BLK_SZ;
 
