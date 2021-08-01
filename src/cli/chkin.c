@@ -86,6 +86,7 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
                         strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE);
                         xrename(src_cp, cwd);
                         xchmod(cwd, S_IRUSR | S_IRGRP | S_IROTH);
+                        add_file_to_list(list, (char*)str);
                         memset(cwd + cwd_len, 0x0, DATA_FILE_NAME_SIZE - 1);
                 }
 
@@ -121,7 +122,6 @@ chkin_file(const char* src, struct data_list* list, char* cwd, void* hash,
                 strncat(cwd, (char*)str, DATA_FILE_NAME_SIZE);
                 xrename(src, cwd);
                 xchmod(cwd, S_IRUSR | S_IRGRP | S_IROTH);
-                add_file_to_list(list, (char*)str);
         }
 
         xclose(src_fd);
