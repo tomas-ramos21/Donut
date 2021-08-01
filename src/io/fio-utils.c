@@ -10,12 +10,8 @@
 #include "unistd.h"
 #include "stdio.h"
 
-/* TODO: Finish implementing "get_repo_data_list" */
-/* TODO: Implement data files data structure */
-
 void
-get_repo_data_list(struct slabs* slabs, void** pgs, struct data_list* list,
-                   char* path)
+get_repo_data_list(struct data_list* list, char* path)
 {
         struct dirent* entry;
         DIR* dir = xopendir(path);
