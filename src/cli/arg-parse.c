@@ -2,6 +2,7 @@
 #include "const/const.h"
 #include "misc/decorations.h"
 #include "stdio.h"
+#include "getopt.h"
 #include "stdlib.h"
 #include "string.h"
 #include "unistd.h"
