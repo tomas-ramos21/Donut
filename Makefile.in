@@ -9,7 +9,7 @@ OS=$(shell uname -s)
 ARCH=$(shell uname -m)
 ARM=$(findstring arm,$(ARCH))
 DEFS=-DN_CPU=$(CPU) -DOPEN_MAX=$(OPEN_MAX) -DPAGE_SIZE=$(PAGE_SIZE) -DCACHE_LINE=$(CACHE_LINE_SIZE) -DI_CACHE=$(INSTRUCTION_CACHE) -DD_CACHE=$(DATA_CACHE)
-CFLAGS=-O3 -Wall -g -std=c99 -Iinc -pedantic $(DEFS)
+CFLAGS=-O3 -Wall -g -std=gnu99 -Iinc -pedantic $(DEFS)
 CC=@CC@
 
 # Default Hardware Config Variabes
