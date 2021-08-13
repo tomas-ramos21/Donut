@@ -133,6 +133,44 @@ int xchmod(const char* path, mode_t mode);
 
 char* xgetcwd(char* buf, size_t size);
 
+/**
+ * Wrapper of the standard "malloc" function.
+ *
+ * Wrapper around the standard "malloc" function which provides the following:
+ *  1. Ensures memory is aligned to the cache line size
+ *  2. If the allocation fails, the program is immediatly failed
+ *
+ * @param sz Byte size of the memory to be allocated
+ * @returns Pointer to the allocated buffer
+ */
+void* xmalloc(size_t sz);
+
+/**
+ * Wrapper of the standard "calloc" function.
+ *
+ * Wrapper around the standard "calloc" function which provides the following:
+ *  1. Ensures memory is aligned to the cache line size
+ *  2. If the allocation fails, the program is immediatly failed
+ *
+ * @param n Number of memory blocks to be allocated
+ * @param sz Byte size of each memory block to be allocated
+ * @returns Pointer to the allocated buffer
+ */
+void* xcalloc(size_t n, size_t sz);
+
+/**
+ * Wrapper of the standard "realloc" function.
+ *
+ * Wrapper around the standard "realloc" function which provides the following:
+ *  1. Ensures memory is aligned to the cache line size
+ *  2. If the allocation fails, the program is immediatly failed
+ *
+ * @param buff Buffer whose memory content needs to be expanded
+ * @param sz Byte size of the buffer to be allocated
+ * @returns Pointer to the allocated buffer
+ */
+void* xrealloc(void* buff, size_t sz);
+
 /* Unit Tests */
 
 /**
@@ -198,5 +236,26 @@ int test_xrename(void);
 int test_xchmod(void);
 
 int test_xgetcwd(void);
+
+/**
+ * Collection of unit tests for xmalloc.
+ * Runs tests to check if the function is capable of allocating aligned memory.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
+int test_xmalloc(void);
+
+/**
+ * Collection of unit tests for xcalloc.
+ * Runs tests to check if the function is capable of allocating aligned memory.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
+int test_xcalloc(void);
+
+/**
+ * Collection of unit tests for xrealloc.
+ * Runs tests to check if the function is capable of allocating aligned memory.
+ * @returns In case of success the return value is 1 otheriwse its 0.
+ */
+int test_xrealloc(void);
 
 #endif // __FIO_H_

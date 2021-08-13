@@ -1,5 +1,4 @@
 #include "cli/cmd.h"
-#include "mem/alloc.h"
 #include "mem/slab.h"
 #include "mem/mem_utils.h"
 #include "core/wrappers.h"
@@ -19,35 +18,6 @@
  * to detect issues with the installation or setup of the system. It will also
  * contain functions to build reports on what may have occurred with the system.
  */
-
-/**
- * Execute all memory allocation module's unit tests.
- *
- * Executes all unit tests for the memory allocation module and prints onto the
- * screen if they passed or failed.
- */
-static void
-test_mem_alloc(void)
-{
-        /*  Malloc Test */
-        printf("\n[Allocation Module]\n");
-        if (test_xmalloc())
-                printf(GREEN "- xmalloc: passed" RESET "\n");
-        else
-                printf(RED "- xmalloc: failed" RESET "\n");
-
-        /* Calloc Test */
-        if (test_xcalloc())
-                printf(GREEN "- xcalloc: passed" RESET "\n");
-        else
-                printf(RED "- xcalloc: failed" RESET "\n");
-
-        /* Realloc Test */
-        if (test_xrealloc())
-                printf(GREEN "- xrealloc: passed" RESET "\n");
-        else
-                printf(RED "- xrealloc: failed" RESET "\n");
-}
 
 /**
  * Execute all slab allocator module's unit tests.
@@ -144,6 +114,23 @@ test_core_wrappers(void)
                 printf(GREEN "- xgetcwd: passed" RESET "\n");
         else
                 printf(RED "- xgetcwd: failed" RESET "\n");
+
+        if (test_xmalloc())
+                printf(GREEN "- xmalloc: passed" RESET "\n");
+        else
+                printf(RED "- xmalloc: failed" RESET "\n");
+
+        /* Calloc Test */
+        if (test_xcalloc())
+                printf(GREEN "- xcalloc: passed" RESET "\n");
+        else
+                printf(RED "- xcalloc: failed" RESET "\n");
+
+        /* Realloc Test */
+        if (test_xrealloc())
+                printf(GREEN "- xrealloc: passed" RESET "\n");
+        else
+                printf(RED "- xrealloc: failed" RESET "\n");
 }
 
 /**
@@ -231,7 +218,6 @@ test_cli_arg_parsing(void)
 int
 doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
-        test_mem_alloc();
         test_mem_slab();
         test_core_wrappers();
         test_crypto();

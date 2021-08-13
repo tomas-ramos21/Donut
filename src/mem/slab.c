@@ -1,5 +1,6 @@
+#include "core/wrappers.h"
 #include "mem/slab.h"
-#include "mem/alloc.h"
+#include "stdio.h"
 #include "inttypes.h"
 #include "string.h"
 
