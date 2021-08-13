@@ -2,14 +2,6 @@
 #define __DONUT_H_
 
 /**
- * Structure used to keep the options and arguments passed to Donut.
- */
-struct parsed_args {
-        unsigned int opts; /**< Options passed by the user */
-        char* args;        /**< Array of arguments passed by the user*/
-};
-
-/**
  * Donut's actual entry point.
  *
  * This is the actual Donut's entry point, which should be modified in case
