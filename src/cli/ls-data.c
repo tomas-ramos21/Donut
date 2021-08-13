@@ -44,7 +44,7 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
                 n_len = strlen(entry->d_name);
                 strncat(cwd, entry->d_name, n_len);
                 stat(cwd, &f);
-                printf("%s\t%19llu\t%32s\n", df_name, f.st_size, entry->d_name);
+                printf("%s\t%19lu\t%32s\n", df_name, f.st_size, entry->d_name);
                 memset(cwd + len, 0x0, n_len);
         }
 

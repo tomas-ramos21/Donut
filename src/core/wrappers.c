@@ -9,6 +9,8 @@
 #include "sys/stat.h"
 #include "unistd.h"
 #include "fcntl.h"
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "string.h"
 #include "const/nix_cmds.h"
 #include "stdarg.h"
@@ -141,7 +143,7 @@ xread(int fd, void* buf, size_t nbyte)
                 } else if (!bytes_read) {
                         return acc;
                 } else if (bytes_read < 0) {
-                        printf(DONUT "Failed reading from file with error: %lu.\n",
+                        printf(DONUT "Failed reading from file with error: %u.\n",
                                bytes_read);
                         exit(DEF_ERR);
                 }
@@ -202,7 +204,7 @@ xpread(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 } else if (!bytes_read) {
                         return acc;
                 } else if (bytes_read < 0) {
-                        printf(DONUT "Failed reading from file with error: %lu.\n",
+                        printf(DONUT "Failed reading from file with error: %u.\n",
                                bytes_read);
                         exit(DEF_ERR);
                 }
@@ -262,7 +264,7 @@ xwrite(int fd, void* buf, size_t nbyte)
                 if(errno == EINTR) {
                         continue;
                 } else if ((long)written < 0) {
-                        printf(DONUT "Failed writing to file with error: %ld.\n",
+                        printf(DONUT "Failed writing to file with error: %u.\n",
                                written);
                         exit(DEF_ERR);
                 }
@@ -322,7 +324,7 @@ xpwrite(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 if(errno == EINTR) {
                         continue;
                 } else if ((long)written < 0) {
-                        printf(DONUT "Failed writing to file with error: %ld.\n",
+                        printf(DONUT "Failed writing to file with error: %u.\n",
                                written);
                         exit(DEF_ERR);
                 }
