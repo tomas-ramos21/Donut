@@ -2,7 +2,7 @@
 #include "const/const.h"
 #include "misc/decorations.h"
 #include "sys/stat.h"
-#include "io/fio.h"
+#include "core/wrappers.h"
 #include "dirent.h"
 #include "stdio.h"
 #include "string.h"

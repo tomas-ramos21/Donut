@@ -2,7 +2,7 @@
 #include "mem/alloc.h"
 #include "mem/slab.h"
 #include "mem/mem_utils.h"
-#include "io/fio.h"
+#include "core/wrappers.h"
 #include "string.h"
 #include "misc/colour.h"
 #include "crypto/sha2.h"
@@ -82,9 +82,9 @@ test_mem_slab(void)
  * screen if they passed or failed.
  */
 static void
-test_io_fio(void)
+test_core_wrappers(void)
 {
-        printf("\n[File I/O Module]\n");
+        printf("\n[Wrappers Module]\n");
         if (test_xopen())
                 printf(GREEN "- xopen: passed" RESET "\n");
         else
@@ -233,7 +233,7 @@ doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
         test_mem_alloc();
         test_mem_slab();
-        test_io_fio();
+        test_core_wrappers();
         test_crypto();
         test_memory_utilities();
         test_core_module();

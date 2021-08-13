@@ -9,7 +9,7 @@
 #include "unistd.h"
 #include "dirent.h"
 #include "const/err.h"
-#include "io/fio.h"
+#include "core/wrappers.h"
 #include "core/data-list.h"
 #include "tools/validation.h"
 #include "string.h"

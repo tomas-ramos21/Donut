@@ -1,6 +1,6 @@
 #include "stdio.h"
 #include "string.h"
-#include "io/fio.h"
+#include "core/wrappers.h"
 #include "cli/cmd.h"
 #include "sys/stat.h"
 #include "mem/slab.h"
