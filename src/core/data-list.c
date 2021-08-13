@@ -1,6 +1,9 @@
 #include "core/data-list.h"
 #include "const/const.h"
 #include "misc/decorations.h"
+#include "sys/stat.h"
+#include "io/fio.h"
+#include "dirent.h"
 #include "stdio.h"
 #include "string.h"
 
@@ -159,4 +162,18 @@ is_in_data_list(struct data_list* restrict list, char* str)
         }
 
         return ret;
+}
+
+void
+get_repo_data_list(struct data_list* list, char* path)
+{
+        struct dirent* entry;
+        DIR* dir = xopendir(path);
+
+        while ((entry = readdir(dir))) {
+                if (entry->d_type != DT_REG)
+                        continue;
+
+                add_file_to_list(list, entry->d_name);
+        }
 }

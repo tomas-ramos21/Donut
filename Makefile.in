@@ -1,6 +1,6 @@
 # Set variables
 EXE=donut
-INC_DIR=inc
+INC_DIR=include
 SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin

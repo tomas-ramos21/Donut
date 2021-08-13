@@ -10,7 +10,6 @@
 #include "dirent.h"
 #include "const/err.h"
 #include "io/fio.h"
-#include "io/fio-utils.h"
 #include "core/data-list.h"
 #include "tools/validation.h"
 #include "string.h"

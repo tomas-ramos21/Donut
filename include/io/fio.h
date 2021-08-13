@@ -131,6 +131,8 @@ int xrename(const char* old, const char* new);
 
 int xchmod(const char* path, mode_t mode);
 
+char* xgetcwd(char* buf, size_t size);
+
 /* Unit Tests */
 
 /**
@@ -194,5 +196,7 @@ int test_xmkdir(void);
 int test_xrename(void);
 
 int test_xchmod(void);
+
+int test_xgetcwd(void);
 
 #endif // __FIO_H_

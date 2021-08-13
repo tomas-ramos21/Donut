@@ -525,3 +525,34 @@ cleanup_return:
         free(f);
         return ret;
 }
+
+char*
+xgetcwd(char* buf, size_t size)
+{
+        char* ret = getcwd(buf, size);
+
+        if (!ret) {
+                printf(DONUT_ERROR "Failed obtaining CWD.\n");
+                exit(1);
+        }
+
+        return ret;
+
+}
+
+int
+test_xgetcwd(void)
+{
+        int ret = 0;
+        char* buf = malloc(PAGE_SIZE);
+
+        buf = getcwd(buf, PAGE_SIZE);
+        if (buf) {
+                ret = 1;
+                goto cleanup_return;
+        }
+
+cleanup_return:
+        free(buf);
+        return ret;
+}
