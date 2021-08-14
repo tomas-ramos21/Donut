@@ -143,7 +143,7 @@ xread(int fd, void* buf, size_t nbyte)
                 } else if (!bytes_read) {
                         return acc;
                 } else if (bytes_read < 0) {
-                        printf(DONUT "Failed reading from file with error: %u.\n",
+                        printf(DONUT "Failed reading from file with error: %lu.\n",
                                bytes_read);
                         exit(DEF_ERR);
                 }
@@ -204,7 +204,7 @@ xpread(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 } else if (!bytes_read) {
                         return acc;
                 } else if (bytes_read < 0) {
-                        printf(DONUT "Failed reading from file with error: %u.\n",
+                        printf(DONUT "Failed reading from file with error: %lu.\n",
                                bytes_read);
                         exit(DEF_ERR);
                 }
@@ -264,7 +264,7 @@ xwrite(int fd, void* buf, size_t nbyte)
                 if(errno == EINTR) {
                         continue;
                 } else if ((long)written < 0) {
-                        printf(DONUT "Failed writing to file with error: %u.\n",
+                        printf(DONUT "Failed writing to file with error: %lu.\n",
                                written);
                         exit(DEF_ERR);
                 }
@@ -324,7 +324,7 @@ xpwrite(int fd, void* restrict buf, size_t nbyte, off_t offset)
                 if(errno == EINTR) {
                         continue;
                 } else if ((long)written < 0) {
-                        printf(DONUT "Failed writing to file with error: %u.\n",
+                        printf(DONUT "Failed writing to file with error: %lu.\n",
                                written);
                         exit(DEF_ERR);
                 }
