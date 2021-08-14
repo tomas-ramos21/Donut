@@ -86,6 +86,8 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
                 memset(src_cp + src_len, 0x0, name_len);
                 str -= SHA_BLK_SZ;
         }
+
+        xclosedir(dir);
         return 0;
 }
 

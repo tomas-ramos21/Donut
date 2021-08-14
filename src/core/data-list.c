@@ -176,4 +176,6 @@ get_repo_data_list(struct data_list* list, char* path)
 
                 add_file_to_list(list, entry->d_name);
         }
+
+        xclosedir(dir);
 }

@@ -392,7 +392,9 @@ test_xopendir(void)
 {
         const char* path = getenv("HOME");
         DIR* dir = opendir(path);
-        return (dir) ? 1 : 0;
+        int ret = (dir) ? 1 : 0;
+        closedir(dir);
+        return ret;
 }
 
 int

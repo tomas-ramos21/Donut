@@ -48,6 +48,7 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
                 memset(cwd + len, 0x0, n_len);
         }
 
+        xclosedir(dir);
         clear_slabs(slabs);
         return 0;
 }
