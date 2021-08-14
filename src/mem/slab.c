@@ -182,5 +182,7 @@ clear_slabs(struct slabs* restrict ptr)
         void** slabs = ptr->origs;
         for (uint64_t i = 0; i != ptr->idx; i++)
                 free(slabs[i]);
+	free(ptr->origs);
+	free(ptr->slabs);
         free(ptr);
 }

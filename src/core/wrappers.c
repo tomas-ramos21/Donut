@@ -188,6 +188,7 @@ test_xread()
 cleanup_return:
         remove(cwd);
         free(cwd);
+        free(buf);
         return ret;
 }
 
@@ -250,6 +251,7 @@ test_xpread()
 cleanup_return:
         remove(cwd);
         free(cwd);
+        free(buf);
         return ret;
 }
 
