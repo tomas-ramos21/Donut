@@ -119,6 +119,10 @@ clean:
 	@rm -r "configure"
 	@echo [Donut] Cleaned previous compilation
 
+test:
+	./bin/donut conf
+	./bin/donut doctor
+
 uninstall:
 	@rm $(USR_DIR)/$(EXE)
 	@echo [Donut] Uninstalled
