@@ -25,7 +25,7 @@
 int
 xopen(const char* path, int oflag, ...)
 {
-        int fd, mode = 0644;
+        int fd, mode = 0;
         va_list ap;
 
         va_start(ap, oflag);
@@ -111,7 +111,7 @@ test_xclose(void)
         if (!stat(cwd, &file))
                 remove(cwd);
 
-        ret = open(cwd, O_CREAT);
+        ret = open(cwd, O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -171,7 +171,7 @@ test_xread()
                 remove(cwd);
 
         /* Create a File */
-        ret = open(cwd, O_RDWR | O_CREAT);
+        ret = open(cwd, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -234,7 +234,7 @@ test_xpread()
                 remove(cwd);
 
         /* Create a File */
-        ret = open(cwd, O_RDWR | O_CREAT);
+        ret = open(cwd, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -293,7 +293,7 @@ test_xwrite(void)
                 remove(cwd);
 
         /* Open or create file */
-        ret = open(cwd, O_RDWR | O_CREAT);
+        ret = open(cwd, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -354,7 +354,7 @@ test_xpwrite(void)
                 remove(cwd);
 
         /* Open or create file */
-        ret = open(cwd, O_RDWR | O_CREAT);
+        ret = open(cwd, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -478,7 +478,7 @@ test_xrename(void)
         strncpy(new, home, PAGE_SIZE - 1);
         strncat(new, "/test2", 6);
 
-        ret = open(old, O_RDWR | O_CREAT);
+        ret = open(old, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
@@ -519,7 +519,7 @@ test_xchmod(void)
         strncpy(f, home, PAGE_SIZE - 1);
         strncat(f, "/test12345", 10);
 
-        ret = open(f, O_RDWR | O_CREAT);
+        ret = open(f, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
                 ret = 0;
                 goto cleanup_return;
