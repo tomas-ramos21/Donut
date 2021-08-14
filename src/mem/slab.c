@@ -102,14 +102,6 @@ test_alloc_slab(void)
             ptr->origs &&
             ptr->origs[0])
                 sum += 1;
-        printf("Slabs Left: %d\n", ptr->slab_l);
-        printf("Slabs Total: %d\n", ptr->slab_t);
-        printf("Slabs not null: %p\n", (void*)ptr->slabs);
-        printf("Page not null: %p\n", (void*)pg);
-        printf("Is Aligned: %d\n", !((uintptr_t)pg % CACHE_LINE));
-        printf("First Index matches Page: %d\n", ptr->slabs[0] == pg);
-        printf("Origs not null: %p\n", (void*)ptr->origs);
-        printf("First Origs not null: %p\n", ptr->origs[0]);
 
         /* Test second allocation, but above page size */
         pg = alloc_slab(ptr, PAGE_SIZE << 1);
@@ -122,14 +114,6 @@ test_alloc_slab(void)
             &ptr->origs[1] &&
             ptr->origs[1])
                 sum += 1;
-        printf("Slabs Left: %d\n", ptr->slab_l);
-        printf("Slabs Total: %d\n", ptr->slab_t);
-        printf("Slabs not null: %p\n", (void*)&ptr->slabs[1]);
-        printf("Page not null: %p\n", (void*)pg);
-        printf("Is Aligned: %d\n", !((uintptr_t)pg % CACHE_LINE));
-        printf("First Index matches Page: %d\n", ptr->slabs[1] == pg);
-        printf("Origs not null: %p\n", (void*)&ptr->origs[1]);
-        printf("First Origs not null: %p\n", ptr->origs[1]);
 
         for (int i = 0; i < 512; i++)
                      alloc_slab(ptr, PAGE_SIZE);
