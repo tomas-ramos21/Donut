@@ -2,3 +2,6 @@ language: c
 compiler:
   - gcc
   - clang
+branches:
+  only:
+    - develop
