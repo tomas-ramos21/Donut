@@ -148,7 +148,7 @@ free_slab(struct slabs* restrict ptr, void* slab)
         while ((*slabs++ = *nxt++));
 
         /* Shrink list of pointers [Unaligned] */
-        nxt = orig;
+        nxt = ++orig;
         orig--;
         while((*orig++ = *nxt++));
 }
