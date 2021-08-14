@@ -8,3 +8,6 @@ branches:
 os:
   - linux
   - osx
+arch:
+  - amd64
+  - arm64
