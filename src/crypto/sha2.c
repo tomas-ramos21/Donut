@@ -364,7 +364,6 @@ void
 sha2_to_strn(uint8_t* hash, char* buf, uint8_t bytes)
 {
         int ret, off = 0;
-	int rem = (bytes % 2) ? 1 : 0;
 
         while (off < bytes) {
                 ret = snprintf(buf + off, 3, "%02x", *hash++);

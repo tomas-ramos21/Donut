@@ -282,7 +282,7 @@ test_xwrite(void)
 {
         int ret;
         size_t bytes = 21;
-        struct stat file;
+        struct stat file = {0};
         char* str = "Do you like donuts?\n";
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
@@ -343,7 +343,7 @@ test_xpwrite(void)
 {
         int ret;
         size_t bytes = 21;
-        struct stat file;
+        struct stat file = {0};
         char* str = "Do you like donuts?\n";
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
