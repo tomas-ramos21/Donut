@@ -25,7 +25,7 @@
 int
 xopen(const char* path, int oflag, ...)
 {
-        int fd, mode = 0;
+        int fd, mode = 0644;
         va_list ap;
 
         va_start(ap, oflag);
