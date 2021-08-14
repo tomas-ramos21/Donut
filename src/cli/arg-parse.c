@@ -100,5 +100,6 @@ test_parse_opts(void)
         ret &= (opt_idx == 5) ? 1 : 0;
         ret &= (!strncmp(buf, "name", 4)) ? 1 : 0;
 
+	free(buf);
         return ret;
 }

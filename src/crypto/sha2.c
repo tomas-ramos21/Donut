@@ -301,8 +301,8 @@ opjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"};
         "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1",
         "cf5b16a778af8380036ce59e7b0492370b249b11e8f07a51afac45037afee9d1"};
 
-        char* out = calloc(1,32);
-        char* str = calloc(1,64);
+        char* out = calloc(1,33);
+        char* str = calloc(1,65);
         void* buf = calloc(1,sizeof(struct hash_state));
         char* out_cp = out;
         int off = 0, res = 0, ret;
@@ -343,43 +343,59 @@ int
 test_sha2_to_str()
 {
         char* test = "Hello World!\n";
-        char* str = calloc(1,32);
-        char* tmp = calloc(1,32);
+        char* str = calloc(1,65);
+        char* tmp = calloc(1,65);
         char* out = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
         void* buf = calloc(1, sizeof(struct hash_state));
+	int ret;
 
         sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
         sha2_to_str((uint8_t*)tmp, str);
-        return !strncmp(str, out, 32);
+        ret = !strncmp(str, out, 64);
+
+	free(str);
+	free(tmp);
+	free(buf);
+
+	return ret;
 }
 
 void
 sha2_to_strn(uint8_t* hash, char* buf, uint8_t bytes)
 {
         int ret, off = 0;
+	int rem = (bytes % 2) ? 1 : 0;
+
         while (off < bytes) {
-                ret = snprintf(buf + off, 3, "%02hhx", *hash++);
+                ret = snprintf(buf + off, 3, "%02x", *hash++);
                 if (ret != -1)
                         off += ret;
         }
+
+	if (bytes % 2)
+		*(buf + --off) = '\0';
 }
 
 int
 test_sha2_to_strn()
 {
         char* test = "Hello World!\n";
-        char* str = calloc(1,64);
-        char* tmp = calloc(1,64);
+        char* str = calloc(1,65);
+        char* tmp = calloc(1,65);
         char* out = "03ba204e50d126e4674c005e04d82e84c21366780af1f43bd54a37816b6ab340";
         void* buf = calloc(1, sizeof(struct hash_state));
         int ret = 1;
 
         sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
 
-        for (uint8_t i = 0; i < SHA_BLK_SZ; i++) {
+        for (uint8_t i = 0; i <= SHA_BLK_SZ; i++) {
                 sha2_to_strn((uint8_t*)tmp, str, i);
                 ret &= !strncmp(str, out, i);
         }
+
+	free(str);
+	free(tmp);
+	free(buf);
 
         return ret;
 }

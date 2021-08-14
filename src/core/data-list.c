@@ -39,6 +39,9 @@ test_data_list_init(void)
         ret &= (buf->elem_t == 0) ? 1 : 0;
         ret &= (buf->pgs == 0x0) ? 1 : 0;
         ret &= (buf->slabs != 0x0) ? 1 : 0;
+
+	free(buf);
+	clear_slabs(slabs);
         return ret;
 }
 
@@ -77,6 +80,8 @@ test_get_data_list_index()
                 ret &= (get == ((char*)buf->pgs[0] + (i * DATA_FILE_NAME_SIZE))) ? 1 : 0;
         }
 
+	free(buf);
+	clear_slabs(slabs);
         return ret;
 }
 
@@ -139,6 +144,8 @@ test_add_file_to_data_list(void)
         data = ((char*)buf->pgs[0]) + 1 * 32;
         ret &= !strncmp(data, test, 31);
 
+	free(buf);
+	clear_slabs(slabs);
         return ret;
 }
 
