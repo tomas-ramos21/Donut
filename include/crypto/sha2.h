@@ -39,7 +39,7 @@
  * @param buf Buffer where the hash state will be stored during the procedure
  * @param len Byte length of the input buffer
  */
-void sha2_hash(uintptr_t* restrict in, uint8_t* out, void* restrict buf, size_t len);
+void sha2_hash(uint8_t* restrict in, uint8_t* out, void* restrict buf, size_t len);
 
 /**
  * Convert a hash into a string.

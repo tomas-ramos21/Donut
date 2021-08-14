@@ -194,7 +194,7 @@ xform(struct hash_state* restrict hash)
  * @param bytes The message's remaining byte count
  */
 inline static void
-sha2_padding(struct hash_state* hash, uintptr_t* restrict in, uint64_t bytes)
+sha2_padding(struct hash_state* hash, uint8_t* restrict in, uint64_t bytes)
 {
         memset(hash->data, 0x0, SHA_BLK_SZ);
         memcpy(hash->data, in, bytes);
@@ -233,7 +233,7 @@ sha2_update(void* in, void* out, void* buf, size_t bytes)
         }
 
         if (rem) {
-                sha2_padding(hash, (uintptr_t*)in_cp, rem);
+                sha2_padding(hash, (uint8_t*)in_cp, rem);
 
                 for (int i = 0; i < 4; i++) {
                         out_cp[i]      = (hash->hx[0] >> (24 - i * 8)) & 0x000000ff;
@@ -249,11 +249,11 @@ sha2_update(void* in, void* out, void* buf, size_t bytes)
 }
 
 void
-sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, size_t len)
+sha2_hash(uint8_t* restrict in, uint8_t* restrict out, void* restrict buf, size_t len)
 {
         struct hash_state* hash = buf;
         uint64_t rm, i, blks = len / SHA_BLK_SZ;
-
+ 
         hash->len = blks * 512;
         hash->hx[0] = 0x6a09e667;
         hash->hx[1] = 0xbb67ae85;
@@ -266,7 +266,7 @@ sha2_hash(uintptr_t* restrict in, uint8_t* restrict out, void* restrict buf, siz
 
         for (i = 0; i < blks; i++) {
                 memcpy(hash->data, in, SHA_BLK_SZ);
-                in += (SHA_BLK_SZ / 8);
+                in += SHA_BLK_SZ;
                 xform(hash);
         }
 
@@ -309,7 +309,7 @@ opjklmnopqklmnopqrlmnopqrsmnopqrstnopqrstu"};
 
         /* Run Tests */
         for (int i = 0; i < 4; i++) {
-                sha2_hash((uintptr_t*)tests[i], (uint8_t*)out, buf, strlen(tests[i]));
+                sha2_hash((uint8_t*)tests[i], (uint8_t*)out, buf, strlen(tests[i]));
                 while (off < 64) {
                         ret = snprintf(str + off, 3, "%02hhx", *out++);
                         if (ret != -1)
@@ -349,7 +349,7 @@ test_sha2_to_str()
         void* buf = calloc(1, sizeof(struct hash_state));
 	int ret;
 
-        sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
+        sha2_hash((uint8_t*)test, (uint8_t*)tmp, buf, strlen(test));
         sha2_to_str((uint8_t*)tmp, str);
         ret = !strncmp(str, out, 64);
 
@@ -385,7 +385,7 @@ test_sha2_to_strn()
         void* buf = calloc(1, sizeof(struct hash_state));
         int ret = 1;
 
-        sha2_hash((uintptr_t*)test, (uint8_t*)tmp, buf, strlen(test));
+        sha2_hash((uint8_t*)test, (uint8_t*)tmp, buf, strlen(test));
 
         for (uint8_t i = 0; i <= SHA_BLK_SZ; i++) {
                 sha2_to_strn((uint8_t*)tmp, str, i);
