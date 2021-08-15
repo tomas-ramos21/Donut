@@ -11,3 +11,4 @@ os:
 arch:
   - amd64
   - arm64
+  - x86
