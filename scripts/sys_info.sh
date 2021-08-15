@@ -97,8 +97,8 @@ get_cpu_count()
         if [ "$1" = "Darwin" ] || [ "$1" = "FreeBSD" ]; then
                 CPU_CNT=`sysctl -a | grep -i hw.physicalcpu: | cut -d' ' -f2 | tr -dc '[:digit:]'`
         elif [ "$1" = "Linux" ]; then
-                SOCKETS=`lscpu | grep -i "Socket(s):" | tr -d [[:blank:]] | cut -d ':' -it:]`
-                CORES=`lscpu | grep -i "Core(s) per socket:" | tr -d [[:blank:]] | cut -d ':' -it:]`
+                SOCKETS=`lscpu | grep -i "Socket(s):" | tr -d [[:blank:]] | cut -d ':' -f 2`
+                CORES=`lscpu | grep -i "Core(s) per socket:" | tr -d [[:blank:]] | cut -d ':' -f 2`
                 CPU_CNT=`expr "$SOCKETS" \* "$CORES"`
         else
                 CPU_CNT="$DEFAULT_CPU_CNT"
