@@ -5,79 +5,18 @@ SRC_DIR=src
 OBJ_DIR=obj
 BIN_DIR=bin
 USR_DIR=/usr/local/bin/
-OS=$(shell uname -s)
-ARCH=$(shell uname -m)
-ARM=$(findstring arm,$(ARCH))
+CONFIG_SCRIPT=./scripts/sys_info.sh
 DEFS=-DN_CPU=$(CPU) -DOPEN_MAX=$(OPEN_MAX) -DPAGE_SIZE=$(PAGE_SIZE) -DCACHE_LINE=$(CACHE_LINE_SIZE) -DI_CACHE=$(INSTRUCTION_CACHE) -DD_CACHE=$(DATA_CACHE)
 CFLAGS=-O3 -Wall -g -std=gnu99 -Iinc -pedantic $(DEFS)
 CC=@CC@
 
-# Default Hardware Config Variabes
-DEFAULT_PAGE_SIZE=4096
-DEFAULT_OPEN_MAX=256
-DEFAULT_CACHE_LINE_SIZE=64
-DEFAULT_NUMBER_CPUS=1
-DEFAULT_I_CACHE_SIZE=32768
-DEFAULT_D_CACHE_SIZE=32768
-
 # Hardware Variables
-ifeq ($(ARM), arm)
-	OPEN_MAX=$(DEFAULT_OPEN_MAX)
-	PAGE_SIZE=$(DEFAULT_PAGE_SIZE)
-	CACHE_LINE_SIZE=$(DEFAULT_CACHE_LINE_SIZE)
-	CPU=$(DEFAULT_NUMBER_CPUS)
-	INSTRUCTION_CACHE=$(DEFAULT_I_CACHE_SIZE)
-	DATA_CACHE=$(DEFAULT_D_CACHE_SIZE)
-else ifeq ($(OS), Darwin)
-	OPEN_MAX_CMD := $(shell getconf OPEN_MAX | tr -dc '[:digit:]')
-	OPEN_MAX := $(if $(OPEN_MAX_CMD),$(OPEN_MAX_CMD),$(DEFAULT_OPEN_MAX))
-	PAGE_SIZE_CMD := $(shell sysctl -a | grep -i hw.pagesize: | cut -d' ' -f2 | tr -dc '[:digit:]')
-	PAGE_SIZE := $(if $(PAGE_SIZE_CMD),$(PAGE_SIZE_CMD),$(DEFAULT_PAGE_SIZE))
-	CACHE_LINE_CMD := $(shell sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	CACHE_LINE_SIZE := $(if $(CACHE_LINE_CMD),$(CACHE_LINE_CMD),$(DEFAULT_CACHE_LINE_SIZE))
-	NUM_CPUS := $(shell sysctl -a | grep -i hw.physicalcpu: | cut -d' ' -f2 | tr -dc '[:digit:]')
-	CPU := $(if $(NUM_CPUS),$(NUM_CPUS),$(DEFAULT_NUMBER_CPUS))
-	I_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1icachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	INSTRUCTION_CACHE := $(if $(I_CACHE_CMD),$(I_CACHE_CMD),$(DEFAULT_I_CACHE_SIZE))
-	D_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1dcachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	DATA_CACHE := $(if $(D_CACHE_CMD),$(D_CACHE_CMD),$(DEFAULT_D_CACHE_SIZE))
-else ifeq ($(OS), FreeBSD)
-	OPEN_MAX_CMD := $(shell getconf OPEN_MAX | tr -dc '[:digit:]')
-	OPEN_MAX := $(if $(OPEN_MAX_CMD),$(OPEN_MAX_CMD),$(DEFAULT_OPEN_MAX))
-	PAGE_SIZE_CMD := $(shell sysctl -a | grep -i hw.pagesize: | cut -d' ' -f2 | tr -dc '[:digit:]')
-	PAGE_SIZE := $(if $(PAGE_SIZE_CMD),$(PAGE_SIZE_CMD),$(DEFAULT_PAGE_SIZE))
-	CACHE_LINE_CMD := $(shell sysctl -a | grep -i hw.cachelinesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	CACHE_LINE_SIZE := $(if $(CACHE_LINE_CMD),$(CACHE_LINE_CMD),$(DEFAULT_CACHE_LINE_SIZE))
-	NUM_CPUS := $(shell sysctl -a | grep -i hw.physicalcpu: | cut -d' ' -f2 | tr -dc '[:digit:]')
-	CPU := $(if $(NUM_CPUS),$(NUM_CPUS),$(DEFAULT_NUMBER_CPUS))
-	I_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1icachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	INSTRUCTION_CACHE := $(if $(I_CACHE_CMD),$(I_CACHE_CMD),$(DEFAULT_I_CACHE_SIZE))
-	D_CACHE_CMD := $(shell sysctl -a | grep -i hw.l1dcachesize | cut -d' ' -f2 | tr -dc '[:digit:]')
-	DATA_CACHE := $(if $(D_CACHE_CMD),$(D_CACHE_CMD),$(DEFAULT_D_CACHE_SIZE))
-else ifeq ($(OS), Linux)
-	OPEN_MAX_CMD := $(shell getconf -a | grep -i OPEN_MAX | tr -dc '[:digit:]')
-	OPEN_MAX := $(if $(OPEN_MAX_CMD),$(OPEN_MAX_CMD),$(DEFAULT_OPEN_MAX))
-	PAGE_SIZE_CMD := $(shell getconf -a | grep -i PAGE_SIZE | tr -dc '[:digit:]')
-	PAGE_SIZE := $(if $(PAGE_SIZE_CMD),$(PAGE_SIZE_CMD),$(DEFAULT_PAGE_SIZE))
-	CACHE_LINE_CMD := $(shell getconf -a | grep -i LEVEL1_DCACHE_LINESIZE | tr -dc '[:digit:]')
-	CACHE_LINE_SIZE := $(if $(CACHE_LINE_CMD),$(CACHE_LINE_CMD),$(DEFAULT_CACHE_LINE_SIZE))
-	SOCKETS := $(shell lscpu | grep -i "Socket(s):" | tr -d [[:blank:]] | cut -d ':' -it:])
-	CORES := $(shell lscpu | grep -i "Core(s) per socket:" | tr -d [[:blank:]] | cut -d ':' -it:])
-	NUM_CPUS := $(shell $(( $(SOCKETS) * $(CORES) )))
-	CPU := $(if $(NUM_CPUS),$(NUM_CPUS),$(DEFAULT_NUMBER_CPUS))
-	I_CACHE_CMD := $(shell getconf -a | grep -i LEVEL1_ICACHE_SIZE | tr -dc '[:digit:]')
-	INSTRUCTION_CACHE := $(if $(I_CACHE_CMD),$(I_CACHE_CMD),$(DEFAULT_I_CACHE_SIZE))
-	D_CACHE_CMD := $(shell getconf -a | grep -i LEVEL1_DCACHE_SIZE | tr -dc '[:digit:]')
-	DATA_CACHE := $(if $(D_CACHE_CMD),$(D_CACHE_CMD),$(DEFAULT_D_CACHE_SIZE))
-else
-	OPEN_MAX=$(DEFAULT_OPEN_MAX)
-	PAGE_SIZE=$(DEFAULT_PAGE_SIZE)
-	CACHE_LINE_SIZE=$(DEFAULT_CACHE_LINE_SIZE)
-	CPU=$(DEFAULT_NUMBER_CPUS)
-	INSTRUCTION_CACHE=$(DEFAULT_I_CACHE_SIZE)
-	DATA_CACHE=$(DEFAULT_D_CACHE_SIZE)
-endif
-
+OPEN_MAX=$(shell $(CONFIG_SCRIPT) MAX_FD)
+PAGE_SIZE=$(shell $(CONFIG_SCRIPT) PAGE_SZ)
+CACHE_LINE_SIZE=$(shell $(CONFIG_SCRIPT) CACHE_LINE_SZ)
+CPU=$(shell $(CONFIG_SCRIPT) NUM_CPUS)
+INSTRUCTION_CACHE=$(shell $(CONFIG_SCRIPT) ICACHE_SZ)
+DATA_CACHE=$(shell $(CONFIG_SCRIPT) DCACHE_SZ)
 
 # List source files
 SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)
