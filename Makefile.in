@@ -7,7 +7,7 @@ BIN_DIR=bin
 USR_DIR=/usr/local/bin/
 CONFIG_SCRIPT=./scripts/sys_info.sh
 DEFS=-DN_CPU=$(CPU) -DOPEN_MAX=$(OPEN_MAX) -DPAGE_SIZE=$(PAGE_SIZE) -DCACHE_LINE=$(CACHE_LINE_SIZE) -DI_CACHE=$(INSTRUCTION_CACHE) -DD_CACHE=$(DATA_CACHE)
-CFLAGS=-O3 -Wall -g -std=gnu99 -Iinc -pedantic $(DEFS)
+CFLAGS=-O3 -Wall -g -std=gnu99 -I$(INC_DIR) -pedantic $(DEFS)
 CC=@CC@
 
 # Hardware Variables
