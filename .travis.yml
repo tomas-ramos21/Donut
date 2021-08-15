@@ -8,7 +8,6 @@ branches:
 os:
   - linux
   - osx
-  - freebsd
 arch:
   - amd64
   - arm64
