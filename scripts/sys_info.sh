@@ -19,7 +19,7 @@ is_power_of_2()
 {
         POWERS_OF_2="32 64 128 256 512 1024 2048 4096 8192 16384 32768 65536 131072"
 
-        if [ "$POWERS_OF_2" != "${POWERS_OF_2%"$1"*}" ] && [ $"$1" -gt "31" ]; then
+        if [ "$POWERS_OF_2" != "${POWERS_OF_2%"$1"*}" ] && [ "$1" -gt "31" ]; then
                 echo "true"
         else
                 echo ""
