@@ -23,7 +23,6 @@ SRC=$(wildcard $(SRC_DIR)/*.c) $(wildcard $(SRC_DIR)/*/*.c)
 OBJ=$(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 OUT=$(wildcard $(BIN_DIR)/*)
 
-#Target - Actual Program
 all: $(EXE)
 	@mv $(EXE) $(BIN_DIR)/
 	@echo [LD] Executable is ready!
@@ -49,13 +48,11 @@ install:
 	@echo [Donut] Installation Completed
 	@echo [Donut] Use \"donut help\" to learn about Donut
 
-# Clean Action
 clean:
 	@rm -r $(OBJ_DIR)
 	@rm -r $(BIN_DIR)
 	@rm -r "config.log"
 	@rm -r "config.status"
-	@rm -r "configure"
 	@echo [Donut] Cleaned previous compilation
 
 test:

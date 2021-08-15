@@ -6,12 +6,13 @@
 #include "dirent.h"
 
 /**
- * @file fio.h
+ * @file wrappers.h
  *
- * Implementation of wrappers around the standard file I/O functions.
+ * Implementation of wrappers around standard C functions.
  *
- * Provides a collection of "safer" file I/O functions which provide safeguard
- * towards common issues while using them.
+ * Provides a collection of C functions with safety wrappers which provide some
+ * guarantees when using them. Such as failing when memory is not allocated or
+ * keep reading from a file even when the interrupt signal is sent to the program.
  */
 
 /**
@@ -125,20 +126,59 @@ DIR* xopendir(const char* path);
  */
 int xclosedir(DIR* dir);
 
+/**
+ * Simple wrapper around the "mkdir" function.
+ *
+ * Wrapper around the standard "mkdir" function that ensure the directory is
+ * created. Otherwise the function will cause the code to with an error.
+ *
+ * @param pathname String containing the path of the directory.
+ * @param mode Mode used to create the directory.
+ * @returns A 0 return value indicates success.
+ */
 int xmkdir(const char *pathname, mode_t mode);
 
+/**
+ * Simple wrapper around the "rename" function.
+ *
+ * Wrapper around the standard "rename" function that ensures the file/directory
+ * is renamed, otherwise the exits the program with an error status.
+ *
+ * @param old String containing the current path to the file/directory.
+ * @param new String containing the new path to the file/directory.
+ * @returns A 0 value is returned if the operation succeeds.
+ */
 int xrename(const char* old, const char* new);
 
+/**
+ * Simple wrapper around the "chmod" function.
+ *
+ * Wrapper around the standard "chmod" function that ensures the file's
+ * permission bits are set.
+ *
+ * @param path String containing the path to the file.
+ * @param mode Flags indicating the new permission bits for the file.
+ * @returns A 0 value is returned if the operation succeeds.
+ */
 int xchmod(const char* path, mode_t mode);
 
+/**
+ * Simple wrapper around the "getcwd" function.
+ *
+ * Wrapper around the standard "getcwd" function that ensures the CWD is
+ * obtained. Otherwise, the program exits with an error.
+ *
+ * @params buf Pointer to a buffer where the CWD string will be placed.
+ * @params size Maximum size in bytes that CWD is allowed to copy to the buffer.
+ * @returns A non-NULL pointer is returned if the operation succeeds.
+ */
 char* xgetcwd(char* buf, size_t size);
 
 /**
  * Wrapper of the standard "malloc" function.
  *
- * Wrapper around the standard "malloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly failed
+ * Wrapper around the standard "malloc" function which ensures that if the
+ * allocation fails, the program is immediatly failed.
  *
  * @param sz Byte size of the memory to be allocated
  * @returns Pointer to the allocated buffer
@@ -148,13 +188,12 @@ void* xmalloc(size_t sz);
 /**
  * Wrapper of the standard "calloc" function.
  *
- * Wrapper around the standard "calloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly failed
+ * Wrapper around the standard "calloc" function which ensures if the
+ * allocation fails, the program is immediatly failed.
  *
- * @param n Number of memory blocks to be allocated
- * @param sz Byte size of each memory block to be allocated
- * @returns Pointer to the allocated buffer
+ * @param n Number of memory blocks to be allocated.
+ * @param sz Byte size of each memory block to be allocated.
+ * @returns Pointer to the allocated buffer.
  */
 void* xcalloc(size_t n, size_t sz);
 
@@ -162,12 +201,12 @@ void* xcalloc(size_t n, size_t sz);
  * Wrapper of the standard "realloc" function.
  *
  * Wrapper around the standard "realloc" function which provides the following:
- *  1. Ensures memory is aligned to the cache line size
- *  2. If the allocation fails, the program is immediatly failed
+ *  1. If the allocation fails, the program is immediatly failed
+ *  2. If a null pointer is passed, "xmalloc" is called
  *
- * @param buff Buffer whose memory content needs to be expanded
- * @param sz Byte size of the buffer to be allocated
- * @returns Pointer to the allocated buffer
+ * @param buff Buffer whose memory content needs to be expanded.
+ * @param sz Byte size of the buffer to be allocated.
+ * @returns Pointer to the allocated buffer.
  */
 void* xrealloc(void* buff, size_t sz);
 
@@ -229,12 +268,32 @@ int test_xopendir(void);
  */
 int test_xclosedir(void);
 
+/**
+ * Unit test for xmkdir.
+ * Check if the function is capable of creating a directory.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_xmkdir(void);
 
+/**
+ * Unit test for xrename.
+ * Check if the function is capable of renaming a file.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_xrename(void);
 
+/**
+ * Unit test for xchmod.
+ * Check if the function is capable of changing the permission bits of a file.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_xchmod(void);
 
+/**
+ * Unit test for xgetcwd.
+ * Check if the function is capable of obtaining the CWD.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_xgetcwd(void);
 
 /**
