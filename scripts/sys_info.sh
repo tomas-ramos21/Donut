@@ -17,9 +17,9 @@ DEFAULT_DCACHE_SZ=32768
 # TODO: Find scalable way to detect if the digit is a power of 2.
 is_power_of_2()
 {
-        POWERS_OF_2="8 16 32 64 128 256 512 1024 2048 4096 8192 16384 32768 65536 131072"
+        POWERS_OF_2="32 64 128 256 512 1024 2048 4096 8192 16384 32768 65536 131072"
 
-        if [ "$POWERS_OF_2" != "${POWERS_OF_2%"$1"*}" ]; then
+        if [ "$POWERS_OF_2" != "${POWERS_OF_2%"$1"*}" ] && [ $"$1" -gt "31" ]; then
                 echo "true"
         else
                 echo ""
