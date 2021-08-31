@@ -53,7 +53,7 @@ test_xopen(void)
         struct stat file;
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
         char* args[] = {TOUCH_PATH, TEST_FILE, NULL};
         pid_t child;
@@ -105,7 +105,7 @@ test_xclose(void)
         struct stat file;
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
 
         if (!stat(cwd, &file))
@@ -164,7 +164,7 @@ test_xread()
         char* buf = malloc(bytes);
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
 
         if (!stat(cwd, &file))
@@ -227,7 +227,7 @@ test_xpread()
         char* buf = malloc(bytes);
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
 
         if (!stat(cwd, &file))
@@ -286,7 +286,7 @@ test_xwrite(void)
         char* str = "Do you like donuts?\n";
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
 
         if (!stat(cwd, &file))
@@ -347,7 +347,7 @@ test_xpwrite(void)
         char* str = "Do you like donuts?\n";
         char* cwd = malloc(PAGE_SIZE);
         cwd = getcwd(cwd, PAGE_SIZE);
-        cwd = strncat(cwd, "/", 1);
+        cwd = strncat(cwd, "/", 2);
         cwd = strncat(cwd, TEST_FILE, 15);
 
         if (!stat(cwd, &file))
@@ -443,7 +443,7 @@ test_xmkdir(void)
         char* dir_name = calloc(1, PAGE_SIZE);
 
         strncpy(dir_name, path, PAGE_SIZE - 1);
-        strncat(dir_name, "/test", 5);
+        strncat(dir_name, "/test", 6);
         ret = !xmkdir(dir_name, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
 
         rmdir(dir_name);
@@ -473,10 +473,10 @@ test_xrename(void)
         const char* home = getenv("HOME");
 
         strncpy(old, home, PAGE_SIZE - 1);
-        strncat(old, "/test1", 6);
+        strncat(old, "/test1", 7);
 
         strncpy(new, home, PAGE_SIZE - 1);
-        strncat(new, "/test2", 6);
+        strncat(new, "/test2", 7);
 
         ret = open(old, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {
@@ -517,7 +517,7 @@ test_xchmod(void)
         const char* home = getenv("HOME");
 
         strncpy(f, home, PAGE_SIZE - 1);
-        strncat(f, "/test12345", 10);
+        strncat(f, "/test12345", 11);
 
         ret = open(f, O_RDWR | O_CREAT, 0640);
         if (ret < 0) {

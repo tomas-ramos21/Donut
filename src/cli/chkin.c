@@ -62,7 +62,7 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
 
                 /* Get File Path */
                 f_name = entry->d_name;
-                name_len = strlen(f_name);
+                name_len = PAGE_SIZE - strlen(src_cp);
                 strncat(src_cp, f_name, name_len);
                 src_fd = xopen(src_cp, O_RDONLY);
 
@@ -142,14 +142,14 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 
         /* Build CWD & open file */
         cwd = xgetcwd(cwd, PAGE_SIZE);
-        strncat(cwd, DATA_FOLDER, 13);
+        strncat(cwd, DATA_FOLDER, 14);
         if (*df_name && strncmp(DEFAULT_DF, df_name, 4)) {
                 strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
 
                 if (stat(cwd, &dir))
                         xmkdir(cwd, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 
-                strncat(cwd, "/", 1);
+                strncat(cwd, "/", 2);
         }
 
         /* Get data in the current Dataframe or General Repository */

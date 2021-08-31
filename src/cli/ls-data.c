@@ -25,12 +25,12 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
         struct slabs* slabs = init_slabs();
         char* cwd = alloc_slab(slabs, PAGE_SIZE);
         cwd = xgetcwd(cwd, PAGE_SIZE);
-        strncat(cwd, DATA_FOLDER, 13);
+        strncat(cwd, DATA_FOLDER, 14);
         char* df_name = opts + (NAME_ARG_IDX * MAX_ARG_SZ);
 
         if (*df_name && strncmp(DEFAULT_DF, df_name, 4)) {
                 strncat(cwd, df_name, strnlen(df_name, MAX_ARG_SZ));
-                strncat(cwd, "/", 1);
+                strncat(cwd, "/", 2);
         } else {
                 df_name = "main";
         }
@@ -41,10 +41,10 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
                 if (entry->d_type != DT_REG)
                         continue;
 
-                n_len = strlen(entry->d_name);
+                n_len = PAGE_SIZE - strlen(cwd);
                 strncat(cwd, entry->d_name, n_len);
                 stat(cwd, &f);
-                printf("%s\t%19llu\t%32s\n", df_name, f.st_size, entry->d_name);
+                printf("%s\t%19li\t%32s\n", df_name, f.st_size, entry->d_name);
                 memset(cwd + len, 0x0, n_len);
         }
 
