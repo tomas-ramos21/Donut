@@ -78,6 +78,10 @@
  */
 #define NAME_OPT 0x2
 
+/**
+ * @def DEFAULT_DF
+ * Name of the default dataframe.
+ */
 #define DEFAULT_DF "main"
 
 #endif // __CONST_H_
