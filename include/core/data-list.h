@@ -46,9 +46,33 @@ int is_in_data_list(struct data_list* list, char* str);
  */
 void get_repo_data_list(struct data_list* list, char* path);
 
+/**
+ * Return a pointer to the list element at a given index.
+ *
+ * @param data data_list object whose element will be returned.
+ * @param idx Index of the element be returned.
+ * @returns Pointer to the element.
+ */
+ char* get_data_list_index(struct data_list* restrict data, uint32_t idx);
+
 /* Unit Tests */
+
+/**
+ * Ensure the data_list object is initialized with the correct values.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_data_list_init(void);
+
+/**
+ * Ensures the correct element is returned from the data_list object.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_get_data_list_index(void);
+
+/**
+ * Ensure that an element is added to the data_list object at the correct index.
+ * @returns In case of success the return value is 1 otherwise its 0.
+ */
 int test_add_file_to_data_list(void);
 
 #endif // HASH_LIST_H_
