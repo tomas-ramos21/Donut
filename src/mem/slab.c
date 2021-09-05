@@ -28,11 +28,11 @@ test_init_slabs(void)
         int ret = 0;
         struct slab* slab = init_slabs();
 
-        ret |= (slab.slab_t == 0) ? 1 : 0;
-        ret &= (slab.slab_l == 0) ? 1 : 0;
-        ret &= (slab.idx == 0) ? 1 : 0;
-        ret &= (slab.origs == 0) ? 1 : 0;
-        ret &= (slab.slabs == 0) ? 1 : 0;
+        ret |= (slab->slab_t == 0) ? 1 : 0;
+        ret &= (slab->slab_l == 0) ? 1 : 0;
+        ret &= (slab->idx == 0) ? 1 : 0;
+        ret &= (slab->origs == 0) ? 1 : 0;
+        ret &= (slab->slabs == 0) ? 1 : 0;
 
         return ret;
 }

@@ -38,3 +38,18 @@ test_const_memcmp(void)
 
         return !const_memcmp(str1, str3, 8);
 }
+
+/**
+ * Align a memory address to the cache line's size.
+ *
+ * @param ptr Pointer to the memory address to be aligned
+ * @returns Pointer to an aligned memory address
+ */
+inline void*
+align_addr(void* ptr)
+{
+        const int align = CACHE_LINE - 1;
+        uintptr_t bit_mask = ~(uintptr_t)align;
+        return (void*)(((uintptr_t)ptr + align) & bit_mask);
+
+}
