@@ -2,7 +2,7 @@
 #define DATA_LIST_H_
 
 #include "inttypes.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 
 /**
  * @file data-list.h
@@ -14,12 +14,12 @@
  * Initialize a data_list structure.
  *
  * Allocates the memory required for the structure, initializes the values to 0
- * and assigns it a slab allocator.
+ * and assigns it a slob allocator.
  *
- * @param slabs Pointer to the allocator mean to bed use for memory allocations.
+ * @param slobs Pointer to the allocator mean to bed use for memory allocations.
  * @returns Pointer to the initialized data_list structure.
  */
-struct data_list* init_data_list(struct slabs* slabs);
+struct data_list* init_data_list(struct slobs* slobs);
 
 /**
  * Add a file name to the data_list structure.

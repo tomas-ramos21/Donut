@@ -6,7 +6,7 @@
 #include "cli/cmd.h"
 #include "cli/arg-parse.h"
 #include "misc/decorations.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 #include "inttypes.h"
 
 int
@@ -16,8 +16,8 @@ donut_main(int argc, char** argv)
         const char* cmd;
         uint64_t oflags = 0;
         int args_idx, ret = 0;
-        struct slabs* slabs = init_slabs();
-        void* buf = alloc_slab(slabs, PAGE_SIZE);
+        struct slobs* slobs = init_slobs();
+        void* buf = alloc_slob(slobs, PAGE_SIZE);
 
         if (!argv[1]) {
                 printf(DONUT "No command was given. Use \"help\" to learn about\
@@ -44,7 +44,7 @@ donut_main(int argc, char** argv)
         else
                 printf(DONUT_ERROR "Unrecognized command\n" HELP_CMD);
 
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return ret;
 }
 

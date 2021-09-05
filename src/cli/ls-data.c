@@ -3,7 +3,7 @@
 #include "core/wrappers.h"
 #include "cli/cmd.h"
 #include "sys/stat.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 #include "const/err.h"
 #include "const/const.h"
 #include "misc/decorations.h"
@@ -22,8 +22,8 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
 
         struct stat f;
         struct dirent* entry;
-        struct slabs* slabs = init_slabs();
-        char* cwd = alloc_slab(slabs, PAGE_SIZE);
+        struct slobs* slobs = init_slobs();
+        char* cwd = alloc_slob(slobs, PAGE_SIZE);
         cwd = xgetcwd(cwd, PAGE_SIZE);
         strncat(cwd, DATA_FOLDER, 14);
         char* df_name = opts + (NAME_ARG_IDX * MAX_ARG_SZ);
@@ -49,6 +49,6 @@ ls_data(const int argc, char** argv, int arg_idx, char* opts,
         }
 
         xclosedir(dir);
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return 0;
 }

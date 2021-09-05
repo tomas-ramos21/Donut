@@ -1,5 +1,5 @@
 #include "cli/cmd.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 #include "mem/mem_utils.h"
 #include "core/wrappers.h"
 #include "string.h"
@@ -20,29 +20,29 @@
  */
 
 /**
- * Execute all slab allocator module's unit tests.
+ * Execute all slob allocator module's unit tests.
  *
- * Executes all unit tests for the slab allocator module and prints onto the
+ * Executes all unit tests for the slob allocator module and prints onto the
  * screen if they passed or failed.
  */
 static void
-test_mem_slab(void)
+test_mem_slob(void)
 {
-        printf("\n[Slab Module]\n");
-        if (test_init_slab())
-                printf(GREEN "- init_slab: passed" RESET "\n");
+        printf("\n[Slob Module]\n");
+        if (test_init_slob())
+                printf(GREEN "- init_slob: passed" RESET "\n");
         else
-                printf(RED "- init_slab: failed" RESET "\n");
+                printf(RED "- init_slob: failed" RESET "\n");
 
-        if (test_alloc_slab())
-                printf(GREEN "- alloc_slab: passed" RESET "\n");
+        if (test_alloc_slob())
+                printf(GREEN "- alloc_slob: passed" RESET "\n");
         else
-                printf(RED "- alloc_slab: failed" RESET "\n");
+                printf(RED "- alloc_slob: failed" RESET "\n");
 
-        if (test_free_slab())
-                printf(GREEN "- free_slab: passed" RESET "\n");
+        if (test_free_slob())
+                printf(GREEN "- free_slob: passed" RESET "\n");
         else
-                printf(RED "- free_slab: failed" RESET "\n");
+                printf(RED "- free_slob: failed" RESET "\n");
 }
 
 /**
@@ -218,7 +218,7 @@ test_cli_arg_parsing(void)
 int
 doctor(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
 {
-        test_mem_slab();
+        test_mem_slob();
         test_core_wrappers();
         test_crypto();
         test_memory_utilities();

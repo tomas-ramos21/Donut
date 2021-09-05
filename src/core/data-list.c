@@ -16,14 +16,14 @@ struct data_list {
         uint32_t elem_l;     /**< Elements lefts */
         uint32_t elem_t;     /**< Maximum array capacity */
         void** pgs;          /**< Allocated Pages */
-        struct slabs* slabs; /**< Slab Allocator */
+        struct slobs* slobs; /**< Slob Allocator */
 };
 
 struct data_list*
-init_data_list(struct slabs* slabs)
+init_data_list(struct slobs* slobs)
 {
         struct data_list* ret = calloc(1, sizeof(struct data_list));
-        ret->slabs = slabs;
+        ret->slobs = slobs;
         return ret;
 }
 
@@ -31,17 +31,17 @@ int
 test_data_list_init(void)
 {
         int ret = 0;
-        struct slabs* slabs = init_slabs();
-        struct data_list* buf = init_data_list(slabs);
+        struct slobs* slobs = init_slobs();
+        struct data_list* buf = init_data_list(slobs);
         ret |= (buf->idx == 0) ? 1 : 0;
         ret &= (buf->pg_cnt == 0) ? 1 : 0;
         ret &= (buf->elem_l == 0) ? 1 : 0;
         ret &= (buf->elem_t == 0) ? 1 : 0;
         ret &= (buf->pgs == 0x0) ? 1 : 0;
-        ret &= (buf->slabs != 0x0) ? 1 : 0;
+        ret &= (buf->slobs != 0x0) ? 1 : 0;
 
         free(buf);
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return ret;
 }
 
@@ -68,8 +68,8 @@ test_get_data_list_index()
         int ret = 1;
         void* get;
         char* test = "123456789";
-        struct slabs* slabs = init_slabs();
-        struct data_list* buf = init_data_list(slabs);
+        struct slobs* slobs = init_slobs();
+        struct data_list* buf = init_data_list(slobs);
 
         /* Add 1 element to trigger array growth */
         add_file_to_list(buf, test);
@@ -81,7 +81,7 @@ test_get_data_list_index()
         }
 
         free(buf);
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return ret;
 }
 
@@ -92,15 +92,15 @@ add_file_to_list(struct data_list* restrict data, char* f_name)
 
                 /* Grow number of pages suppported */
                 uint32_t new_pgs = data->pg_cnt + GROWTH_FACTOR;
-                void** tmp = alloc_slab(data->slabs, new_pgs * __SIZEOF_POINTER__);
+                void** tmp = alloc_slob(data->slobs, new_pgs * __SIZEOF_POINTER__);
                 memcpy(tmp, data->pgs, data->pg_cnt * __SIZEOF_POINTER__);
 
                 /* Allocate new pages */
                 while (data->pg_cnt < new_pgs)
-                        tmp[data->pg_cnt++] = alloc_slab(data->slabs, PAGE_SIZE);
+                        tmp[data->pg_cnt++] = alloc_slob(data->slobs, PAGE_SIZE);
 
                 /* Update bookkeeping state */
-                free_slab(data->slabs, data->pgs);
+                free_slob(data->slobs, data->pgs);
                 data->pgs = (void**)tmp;
                 data->elem_l += (GROWTH_FACTOR * ELEM_PER_PG);
                 data->elem_t += (GROWTH_FACTOR * ELEM_PER_PG);
@@ -119,8 +119,8 @@ test_add_file_to_data_list(void)
 {
         int ret = 0;
         char* test = "123456789";
-        struct slabs* slabs = init_slabs();
-        struct data_list* buf = init_data_list(slabs);
+        struct slobs* slobs = init_slobs();
+        struct data_list* buf = init_data_list(slobs);
 
         /* Add first item to the list */
         add_file_to_list(buf, test);
@@ -145,7 +145,7 @@ test_add_file_to_data_list(void)
         ret &= !strncmp(data, test, 31);
 
         free(buf);
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return ret;
 }
 

@@ -1,5 +1,5 @@
 #include "cli/cmd.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 #include "errno.h"
 #include "unistd.h"
 #include "stdio.h"

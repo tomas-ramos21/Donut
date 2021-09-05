@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "const/const.h"
 #include "misc/decorations.h"
-#include "mem/slab.h"
+#include "mem/slob.h"
 #include "crypto/sha2.h"
 #include "sys/stat.h"
 #include "sys/types.h"
@@ -35,7 +35,7 @@ compute_file_sha2(int fd, void* hash, void* buf, uint8_t* str)
 }
 
 static int
-chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
+chkin_dir(const char* src, struct data_list* list, struct slobs* slobs,
           char* cwd, void* hash, void* buf, uint8_t* str)
 {
         DIR* dir;
@@ -47,7 +47,7 @@ chkin_dir(const char* src, struct data_list* list, struct slabs* slabs,
         /* Get Variables for Path Treatments */
         size_t src_len = strlen(src);
         size_t cwd_len = strnlen(cwd, PAGE_SIZE);
-        char* src_cp = alloc_slab(slabs, PAGE_SIZE);
+        char* src_cp = alloc_slob(slobs, PAGE_SIZE);
 
         /* Directory Path Treatment */
         strncpy(src_cp, src, src_len);
@@ -134,10 +134,10 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         }
 
         /* Get memory */
-        struct slabs* slabs = init_slabs();
-        char* cwd = alloc_slab(slabs, PAGE_SIZE);
-        void* hash = alloc_slab(slabs, PAGE_SIZE);
-        void* buf = alloc_slab(slabs, PAGE_SIZE);
+        struct slobs* slobs = init_slobs();
+        char* cwd = alloc_slob(slobs, PAGE_SIZE);
+        void* hash = alloc_slob(slobs, PAGE_SIZE);
+        void* buf = alloc_slob(slobs, PAGE_SIZE);
         uint8_t* str = ((uint8_t*)hash + SHA_STRUCT_SZ);
 
         /* Build CWD & open file */
@@ -153,12 +153,12 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
         }
 
         /* Get data in the current Dataframe or General Repository */
-        struct data_list* list = init_data_list(slabs);
+        struct data_list* list = init_data_list(slobs);
         get_repo_data_list(list, cwd);
 
         f_tp = f.st_mode;
         if (f_tp & S_IFDIR)
-                ret = chkin_dir(src, list, slabs, cwd, hash, buf, str);
+                ret = chkin_dir(src, list, slobs, cwd, hash, buf, str);
         else if (f_tp & S_IFREG)
                 ret = chkin_file(src, list, cwd, hash, buf, str);
         else {
@@ -166,6 +166,6 @@ chkin(const int argc, char** argv, int arg_idx, char* opts, uint64_t oflags)
                 ret = DEF_ERR;
         }
 
-        clear_slabs(slabs);
+        clear_slobs(slobs);
         return ret;
 }
