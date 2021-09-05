@@ -10,9 +10,9 @@
  */
 
 struct node {
-        struct object;  /**< Base Object */
-        char ip[40];    /**< Dataframe's files extension */
-        char alias[12]; /**< Name alias for the node */
+        struct object obj; /**< Base Object */
+        char ip[40];       /**< Dataframe's files extension */
+        char alias[12];    /**< Name alias for the node */
 };
 
 

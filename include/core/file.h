@@ -2,6 +2,7 @@
 #define FILE_H_
 
 #include "core/object.h"
+#include "sys/stat.h"
 
 /**
  * @file file.h
@@ -10,9 +11,9 @@
  */
 
 struct data_file {
-        struct object; /**< Base Object */
-        mode_t mode;   /**< File's mode flags */
-        uint64_t size; /**< File's Size */
+        struct object obj; /**< Base Object */
+        mode_t mode;       /**< File's mode flags */
+        uint64_t size;     /**< File's Size */
 };
 
 #endif // FILE_H_
